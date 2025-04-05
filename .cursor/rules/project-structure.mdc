@@ -40,6 +40,8 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 - define Array Types with the [] suffix instead of using the Array<string> syntax
 - use ```function name() {}``` over ```const name = () => {...}``` for multiline functions
 - component library: https://headlessui.com/ 
+- use ziggy route(...) helper for endpoints
+- use lucide vue icons: https://lucide.dev/icons/
 
 ### v-model
 

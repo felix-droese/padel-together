@@ -38,7 +38,7 @@ function submitGame() {
                 <p class="text-sm text-muted-foreground">Create a new padel game with other players.</p>
             </div>
             <Button @click="isGameFormVisible = !isGameFormVisible">
-                {{ isGameFormVisible ? 'Hide Form' : 'Show Form' }}
+                {{ isGameFormVisible ? 'Cancel' : 'Create Game' }}
             </Button>
         </div>
 

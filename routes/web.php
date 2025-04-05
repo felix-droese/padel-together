@@ -3,7 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\PlayersController;
+use App\Http\Controllers\PlayerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,9 +20,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('locations', [LocationController::class, 'store'])->name('locations.store');
     Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
 
-    Route::get('players', [PlayersController::class, 'index'])->name('players.index');
-    Route::get('players/create', [PlayersController::class, 'create'])->name('players.create');
-    Route::post('players', [PlayersController::class, 'store'])->name('players.store');
+    Route::get('players', [PlayerController::class, 'index'])->name('players.index');
+    Route::get('players/create', [PlayerController::class, 'create'])->name('players.create');
+    Route::post('players', [PlayerController::class, 'store'])->name('players.store');
+    Route::delete('players/{player}', [PlayerController::class, 'destroy'])->name('players.destroy');
 
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
     Route::post('/games/{game}/result', [GameController::class, 'storeResult'])->name('games.result');

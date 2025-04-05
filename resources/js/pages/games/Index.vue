@@ -10,13 +10,15 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="mt-10 space-y-4">
+    <div class="mt-10">
         <GameForm :locations="props.locations" :players="props.players" />
 
-        <h2 class="text-xl font-semibold">Games</h2>
-        <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
-        <div v-else class="grid gap-4">
-            <GameCard v-for="game in props.games" :key="game.id" :game="game" :locations="props.locations" />
+        <div class="mt-10">
+            <h2 class="mt-10 text-xl font-semibold"></h2>
+            <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
+            <div v-else class="grid gap-4">
+                <GameCard v-for="game in props.games" :key="game.id" :game="game" :locations="props.locations" />
+            </div>
         </div>
     </div>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
@@ -24,15 +23,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="max-w-2xl space-y-16">
-            <div class="flex gap-4">
-                <Button as-child>
-                    <a :href="route('locations.index')">Locations</a>
-                </Button>
-                <Button as-child>
-                    <a :href="route('players.index')">Players</a>
-                </Button>
-            </div>
-
             <Index :games="props.games" :locations="props.locations" :players="props.players" />
         </div>
     </AppLayout>

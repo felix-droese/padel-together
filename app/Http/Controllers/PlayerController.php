@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class PlayersController extends Controller
+class PlayerController extends Controller
 {
     public function index()
     {
@@ -36,6 +36,13 @@ class PlayersController extends Controller
             'last_name' => $validated['last_name'],
             'user_id' => Auth::id(),
         ]);
+
+        return redirect()->route('players.index');
+    }
+
+    public function destroy(Player $player)
+    {
+        $player->delete();
 
         return redirect()->route('players.index');
     }
