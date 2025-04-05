@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Paul Sochiera', 'email' => 'paul@example.com'],
         ]);
 
-        $users->each(function ($userData) {
+        $users->each(function ($userData) use ($adminRole) {
             $user = User::firstOrCreate(
                 ['email' => $userData['email']],
                 [
@@ -56,6 +56,10 @@ class DatabaseSeeder extends Seeder
                     'password' => Hash::make('1234'),
                 ]
             );
+
+            if ($user->name === 'Yannik Hansen') {
+                $user->assignRole($adminRole);
+            }
 
             Player::factory()->create([
                 'user_id' => $user->id,
