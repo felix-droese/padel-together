@@ -4,11 +4,16 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PlayerController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    return redirect()->route('dashboard');
 })->name('home');
 
 Route::get('dashboard', [DashboardController::class, 'index'])

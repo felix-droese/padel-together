@@ -7,9 +7,10 @@ use App\Models\Location;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,11 +21,17 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $user = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('1234'),
-        ]);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+
+        $user = User::firstOrCreate(
+            ['email' => 'droese.felix@gmail.com'],
+            [
+                'name' => 'Felix Droese',
+                'password' => Hash::make('1234'),
+            ]
+        );
+
+        $user->assignRole($adminRole);
 
         Player::factory()->create([
             'user_id' => $user->id,
@@ -42,11 +49,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $users->each(function ($userData) {
-            $user = User::factory()->create([
-                'name' => $userData['name'],
-                'email' => $userData['email'],
-                'password' => Hash::make('1234'),
-            ]);
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => Hash::make('1234'),
+                ]
+            );
 
             Player::factory()->create([
                 'user_id' => $user->id,

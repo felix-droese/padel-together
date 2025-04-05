@@ -4,27 +4,43 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, MapPin, Users } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Locations',
-        href: '/locations',
-        icon: MapPin,
-    },
-    {
-        title: 'Players',
-        href: '/players',
-        icon: Users,
-    },
-];
+const page = usePage();
+const isAdmin = computed(() => {
+    const roles = page.props.auth.user?.roles || [];
+    return roles.includes('admin');
+});
+
+const mainNavItems = computed(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutGrid,
+        },
+    ];
+
+    if (isAdmin.value) {
+        items.push(
+            {
+                title: 'Locations',
+                href: '/locations',
+                icon: MapPin,
+            },
+            {
+                title: 'Players',
+                href: '/players',
+                icon: Users,
+            },
+        );
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {
