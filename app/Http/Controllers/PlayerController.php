@@ -18,7 +18,8 @@ class PlayerController extends Controller
             'id' => $player->id,
             'first_name' => $player->first_name,
             'last_name' => $player->last_name,
-            'user' => $player->user ? TUser::from(['email' => $player->user->email]) : null,
+            'elo' => $player->elo,
+            'user' => $player->user ? TUser::from($player->user) : null,
         ]));
 
         return Inertia::render('players/Index', [
@@ -41,7 +42,7 @@ class PlayerController extends Controller
 
         $user = User::create([
             'name' => $validated['first_name'].' '.$validated['last_name'],
-            'email' => $validated['email'] ?? '',
+            'email' => $validated['email'] ?? null,
             'password' => bcrypt(Str::random(32)),
         ]);
 

@@ -12,6 +12,7 @@ class TPlayer extends Data
         public int $id,
         public string $first_name,
         public string $last_name,
+        public int $elo,
         public ?TUser $user = null,
     ) {}
 
@@ -21,6 +22,7 @@ class TPlayer extends Data
             $player->id,
             $player->first_name,
             $player->last_name,
+            $player->elo,
             TUser::fromUser($player->user) ?? null,
         );
     }

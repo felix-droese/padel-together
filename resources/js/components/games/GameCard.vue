@@ -74,18 +74,24 @@ watch(
                     <div class="text-xs font-medium text-muted-foreground">Team 1</div>
                     <div class="text-xs font-medium sm:text-base">
                         {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
+                        <span class="text-xs text-muted-foreground">({{ props.game.first_team.players[0].elo }})</span>
                     </div>
                     <div v-if="props.game.first_team.players[1]" class="text-xs font-medium sm:text-base">
                         {{ props.game.first_team.players[1].first_name }} {{ props.game.first_team.players[1].last_name }}
+                        <span class="text-xs text-muted-foreground">({{ props.game.first_team.players[1].elo }})</span>
                     </div>
                 </div>
                 <div class="flex-1">
                     <div class="text-xs font-medium text-muted-foreground">Team 2</div>
                     <div class="text-xs font-medium sm:text-base">
                         {{ props.game.second_team?.players[0]?.first_name }} {{ props.game.second_team?.players[0]?.last_name }}
+                        <span v-if="props.game.second_team?.players[0]" class="text-xs text-muted-foreground"
+                            >({{ props.game.second_team.players[0].elo }})</span
+                        >
                     </div>
                     <div v-if="props.game.second_team?.players[1]" class="text-xs font-medium sm:text-base">
                         {{ props.game.second_team.players[1].first_name }} {{ props.game.second_team.players[1].last_name }}
+                        <span class="text-xs text-muted-foreground">({{ props.game.second_team.players[1].elo }})</span>
                     </div>
                 </div>
             </div>
