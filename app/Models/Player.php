@@ -12,6 +12,8 @@ class Player extends Model
     /** @use HasFactory<\Database\Factories\PlayerFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     public function team(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);

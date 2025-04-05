@@ -24,11 +24,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="max-w-2xl space-y-16">
-            <Button as-child>
-                <a :href="route('locations.index')">Locations</a>
-            </Button>
+            <div class="flex gap-4">
+                <Button as-child>
+                    <a :href="route('locations.index')">Locations</a>
+                </Button>
+                <Button as-child>
+                    <a :href="route('players.index')">Players</a>
+                </Button>
+            </div>
 
-            <Index :games="props.games" :open-games="props.openGames" :locations="props.locations" :players="props.players" />
+            <Index :games="props.games" :locations="props.locations" :players="props.players" />
         </div>
     </AppLayout>
 </template>
