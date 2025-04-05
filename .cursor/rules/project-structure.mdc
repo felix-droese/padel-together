@@ -26,3 +26,8 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 
 ### General Design Decisions
 - we use composition API: https://vuejs.org/guide/extras/composition-api-faq.html
+
+### Creating forms
+
+- when creating forms, use the inertia form helper: https://inertiajs.com/forms
+- look for components in the ./resources/js/* folder, to use existing components like TextInputs etc.

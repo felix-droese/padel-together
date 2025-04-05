@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,27 +13,41 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/dashboard',
     },
 ];
+
+const form = useForm({
+    name: '',
+});
+
+const submit = () => {
+    form.post(route('locations.store'), {
+        onSuccess: () => {
+            form.reset();
+        },
+    });
+};
 </script>
 
 <template>
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                    <PlaceholderPattern />
-                </div>
-                <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                    <PlaceholderPattern />
-                </div>
-                <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                    <PlaceholderPattern />
-                </div>
+        <div class="max-w-2xl space-y-6">
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold">Add New Location</h2>
+                <p class="text-sm text-muted-foreground">Create a new location for your padel matches.</p>
             </div>
-            <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-                <PlaceholderPattern />
-            </div>
+
+            <form @submit.prevent="submit" class="space-y-4">
+                <div class="space-y-2">
+                    <Label for="name">Location Name</Label>
+                    <Input id="name" v-model="form.name" type="text" placeholder="Enter location name" :disabled="form.processing" />
+                    <InputError :message="form.errors.name" />
+                </div>
+
+                <Button type="submit" :disabled="form.processing">
+                    {{ form.processing ? 'Creating...' : 'Create Location' }}
+                </Button>
+            </form>
         </div>
     </AppLayout>
 </template>
