@@ -12,6 +12,7 @@ const props = defineProps<{
     locations: App.DTOs.TLocation[];
     players: App.DTOs.TPlayer[];
     games: App.DTOs.TGame[];
+    openGames: App.DTOs.TGame[];
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,22 +22,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const locationForm = useForm({
-    name: '',
-});
-
 const gameForm = useForm({
     date: '',
     location_id: 0,
 });
-
-function submitLocation() {
-    locationForm.post(route('locations.store'), {
-        onSuccess: () => {
-            locationForm.reset();
-        },
-    });
-}
 
 function submitGame() {
     gameForm.post(route('games.store'), {
@@ -53,21 +42,41 @@ function submitGame() {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="max-w-2xl space-y-6">
             <div class="space-y-2">
-                <h2 class="text-xl font-semibold">Add New Location</h2>
-                <p class="text-sm text-muted-foreground">Create a new location for your padel matches.</p>
+                <h2 class="text-xl font-semibold">Locations</h2>
+                <p class="text-sm text-muted-foreground">Manage your padel match locations.</p>
             </div>
 
-            <form @submit.prevent="submitLocation" class="space-y-4">
-                <div class="space-y-2">
-                    <Label for="name">Location Name</Label>
-                    <Input id="name" v-model="locationForm.name" type="text" placeholder="Enter location name" :disabled="locationForm.processing" />
-                    <InputError :message="locationForm.errors.name" />
+            <div class="flex items-center justify-between">
+                <div v-if="props.locations.length === 0" class="text-sm text-muted-foreground">No locations have been created yet.</div>
+                <div v-else class="grid w-full gap-4">
+                    <div v-for="location in props.locations" :key="location.id" class="rounded-lg border p-4">
+                        <h3 class="font-medium">{{ location.name }}</h3>
+                    </div>
                 </div>
-
-                <Button type="submit" :disabled="locationForm.processing">
-                    {{ locationForm.processing ? 'Creating...' : 'Create Location' }}
+                <Button as-child>
+                    <a :href="route('locations.create')">Create New Location</a>
                 </Button>
-            </form>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold">Open Games</h2>
+                <div v-if="props.openGames.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
+                <div v-else class="grid gap-4">
+                    <div v-for="game in props.openGames" :key="game.id" class="rounded-lg border p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-medium">
+                                    {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }} vs
+                                    {{ game.second_team?.players[0].first_name }} {{ game.second_team?.players[0].last_name }}
+                                </h3>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ new Date(game.date).toLocaleDateString() }} at {{ locations.find((l) => l.id === game.location_id)?.name }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Create New Game</h2>
@@ -102,16 +111,6 @@ function submitGame() {
                     {{ gameForm.processing ? 'Creating...' : 'Create Game' }}
                 </Button>
             </form>
-
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold">Existing Locations</h2>
-                <div v-if="props.locations.length === 0" class="text-sm text-muted-foreground">No locations have been created yet.</div>
-                <div v-else class="grid gap-4">
-                    <div v-for="location in props.locations" :key="location.id" class="rounded-lg border p-4">
-                        <h3 class="font-medium">{{ location.name }}</h3>
-                    </div>
-                </div>
-            </div>
 
             <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Recent Games</h2>

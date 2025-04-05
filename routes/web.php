@@ -15,6 +15,7 @@ Route::get('dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('locations/create', [LocationController::class, 'create'])->name('locations.create');
     Route::post('locations', [LocationController::class, 'store'])->name('locations.store');
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
 });

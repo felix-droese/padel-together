@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class LocationController extends Controller
 {
+    public function create()
+    {
+        return Inertia::render('locations/Create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

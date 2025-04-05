@@ -20,10 +20,13 @@ class DashboardController extends Controller
         $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location'])->get()
             ->map(fn ($game) => TGame::from($game));
 
+        $openGames = $games->filter(fn ($game) => $game->date > now());
+
         return Inertia::render('Dashboard', [
             'locations' => $locations,
             'players' => $players,
             'games' => $games,
+            'openGames' => $openGames,
         ]);
     }
 }
