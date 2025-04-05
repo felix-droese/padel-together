@@ -3,6 +3,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select/index';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -20,11 +21,36 @@ const gameForm = useForm({
     second_team_players: [] as number[],
 });
 
+const openResultPopover = ref<number | null>(null);
+
 function submitGame() {
     gameForm.post(route('games.store'), {
         onSuccess: () => {
             gameForm.reset();
             isGameFormVisible.value = false;
+        },
+    });
+}
+
+function toggleResultPopover(gameId: number) {
+    openResultPopover.value = openResultPopover.value === gameId ? null : gameId;
+}
+
+const resultForm = useForm({
+    game_id: 0,
+    sets: [
+        { first_team: '', second_team: '' },
+        { first_team: '', second_team: '' },
+        { first_team: '', second_team: '' },
+    ],
+});
+
+function submitResult(gameId: number) {
+    resultForm.game_id = gameId;
+    resultForm.post(route('games.result'), {
+        onSuccess: () => {
+            resultForm.reset();
+            openResultPopover.value = null;
         },
     });
 }
@@ -167,9 +193,54 @@ function submitGame() {
                         }}
                     </h3>
                     <p class="text-sm text-muted-foreground">
-                        {{ new Date(game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }} {{ new Date(game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
+                        {{ new Date(game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
+                        {{ new Date(game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
                         {{ locations.find((l) => l.id === game.location_id)?.name }}
                     </p>
+                </div>
+                <div class="relative">
+                    <Popover>
+                        <PopoverButton as="div">
+                            <Button variant="outline" @click="toggleResultPopover(game.id)"> Add Result </Button>
+                        </PopoverButton>
+                        <PopoverPanel
+                            v-if="openResultPopover === game.id"
+                            class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                            <div class="space-y-4 p-4">
+                                <div class="space-y-2">
+                                    <h4 class="font-medium">Enter Result</h4>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="text-sm text-muted-foreground">Set</div>
+                                        <div class="text-sm text-muted-foreground">First Team</div>
+                                        <div class="text-sm text-muted-foreground">Second Team</div>
+                                    </div>
+                                    <div v-for="(set, index) in resultForm.sets" :key="index" class="grid grid-cols-3 gap-2">
+                                        <div class="text-sm">Set {{ index + 1 }}</div>
+                                        <input
+                                            v-model="set.first_team"
+                                            type="number"
+                                            min="0"
+                                            max="7"
+                                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            placeholder="0"
+                                        />
+                                        <input
+                                            v-model="set.second_team"
+                                            type="number"
+                                            min="0"
+                                            max="7"
+                                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <Button @click="submitResult(game.id)" :disabled="resultForm.processing" class="w-full">
+                                    {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
+                                </Button>
+                            </div>
+                        </PopoverPanel>
+                    </Popover>
                 </div>
             </div>
         </div>
