@@ -17,16 +17,15 @@ class DashboardController extends Controller
 
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location'])->get()
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location'])
+            ->orderBy('date', 'desc')
+            ->get()
             ->map(fn ($game) => TGame::from($game));
-
-        $openGames = $games->filter(fn ($game) => $game->date > now());
 
         return Inertia::render('Dashboard', [
             'locations' => $locations,
             'players' => $players,
             'games' => $games,
-            'openGames' => $openGames,
         ]);
     }
 }

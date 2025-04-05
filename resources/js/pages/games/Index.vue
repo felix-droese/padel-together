@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select/index';
 import { useForm } from '@inertiajs/vue3';
@@ -9,7 +8,6 @@ import { ref } from 'vue';
 
 const props = defineProps<{
     games: App.DTOs.TGame[];
-    openGames: App.DTOs.TGame[];
     locations: App.DTOs.TLocation[];
     players: App.DTOs.TPlayer[];
 }>();
@@ -48,7 +46,7 @@ function submitGame() {
             <form v-if="isGameFormVisible" @submit.prevent="submitGame" class="space-y-4">
                 <div class="space-y-2">
                     <Label for="date">Game Date</Label>
-                    <Input id="date" v-model="gameForm.date" type="date" :disabled="gameForm.processing" />
+                    <VueDatePicker v-model="gameForm.date" />
                     <InputError :message="gameForm.errors.date" />
                 </div>
 
@@ -154,43 +152,24 @@ function submitGame() {
         </div>
     </div>
 
-    <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Open Games</h2>
-        <div v-if="props.openGames.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
-        <div v-else class="grid gap-4">
-            <div v-for="game in props.openGames" :key="game.id" class="rounded-lg border p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-medium">
-                            {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }}
-                            {{ game.first_team.players[1] ? `& ${game.first_team.players[1].first_name} ${game.first_team.players[1].last_name}` : '' }} vs
-                            {{ game.second_team?.players[0]?.first_name }} {{ game.second_team?.players[0]?.last_name }}
-                            {{ game.second_team?.players[1] ? `& ${game.second_team.players[1].first_name} ${game.second_team.players[1].last_name}` : '' }}
-                        </h3>
-                        <p class="text-sm text-muted-foreground">
-                            {{ new Date(game.date).toLocaleDateString() }} at {{ locations.find((l) => l.id === game.location_id)?.name }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Recent Games</h2>
-        <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No games have been played yet.</div>
-        <div v-else class="grid gap-4">
-            <div v-for="game in props.games" :key="game.id" class="rounded-lg border p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-medium">
-                            {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }} vs
-                            {{ game.second_team?.players[0].first_name }} {{ game.second_team?.players[0].last_name }}
-                        </h3>
-                        <p class="text-sm text-muted-foreground">
-                            {{ new Date(game.date).toLocaleDateString() }} at {{ locations.find((l) => l.id === game.location_id)?.name }}
-                        </p>
-                    </div>
+    <h2 class="text-xl font-semibold">Games</h2>
+    <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
+    <div v-else class="grid gap-4">
+        <div v-for="game in props.games" :key="game.id" class="rounded-lg border p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-medium">
+                        {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }}
+                        {{ game.first_team.players[1] ? `& ${game.first_team.players[1].first_name} ${game.first_team.players[1].last_name}` : '' }}
+                        vs {{ game.second_team?.players[0]?.first_name }} {{ game.second_team?.players[0]?.last_name }}
+                        {{
+                            game.second_team?.players[1] ? `& ${game.second_team.players[1].first_name} ${game.second_team.players[1].last_name}` : ''
+                        }}
+                    </h3>
+                    <p class="text-sm text-muted-foreground">
+                        {{ new Date(game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }} {{ new Date(game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
+                        {{ locations.find((l) => l.id === game.location_id)?.name }}
+                    </p>
                 </div>
             </div>
         </div>

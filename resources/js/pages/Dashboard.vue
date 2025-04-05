@@ -9,7 +9,6 @@ const props = defineProps<{
     locations: App.DTOs.TLocation[];
     players: App.DTOs.TPlayer[];
     games: App.DTOs.TGame[];
-    openGames: App.DTOs.TGame[];
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
