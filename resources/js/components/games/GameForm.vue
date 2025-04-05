@@ -44,12 +44,33 @@ const locationOptions = computed(() => {
 
 const playerOptions = computed(() => {
     // Filter out the authenticated user's player from the list
-    const filteredPlayers = props.players.filter((player) => player.user?.email !== authenticatedUser?.email);
+    const filteredPlayers = props.players.filter((player) => player.user?.id !== authenticatedUser?.id);
 
     return filteredPlayers.map((player) => ({
         value: player.id,
         label: `${player.first_name} ${player.last_name}`,
     }));
+});
+
+const availableSecondTeamFirstPlayer = computed(() => {
+    // Get all selected players except the current position
+    const selectedPlayers = [gameForm.first_team_players[1], gameForm.second_team_players[1]].filter(Boolean);
+
+    return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
+});
+
+const availableSecondTeamSecondPlayer = computed(() => {
+    // Get all selected players except the current position
+    const selectedPlayers = [gameForm.first_team_players[1], gameForm.second_team_players[0]].filter(Boolean);
+
+    return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
+});
+
+const availableFirstTeamSecondPlayer = computed(() => {
+    // Get all selected players except the current position
+    const selectedPlayers = [gameForm.second_team_players[0], gameForm.second_team_players[1]].filter(Boolean);
+
+    return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
 });
 
 const authenticatedPlayerOption = computed(() => {
@@ -106,17 +127,12 @@ const authenticatedPlayerOption = computed(() => {
                     <div>
                         <Label>First Team Players</Label>
                         <div class="space-y-2">
-                            <EnhancedSelect
-                                v-model="gameForm.first_team_players[0]"
-                                :options="[authenticatedPlayerOption]"
-                                placeholder="Select first player"
-                                :disabled="true"
-                                class="w-[300px]"
-                                :value-type="'number'"
-                            />
+                            <div class="flex h-10 w-[300px] items-center rounded-md border border-input bg-muted px-3 py-2 text-sm">
+                                {{ authenticatedPlayerOption.label }}
+                            </div>
                             <EnhancedSelect
                                 v-model="gameForm.first_team_players[1]"
-                                :options="playerOptions"
+                                :options="availableFirstTeamSecondPlayer"
                                 placeholder="Select second player"
                                 :disabled="gameForm.processing"
                                 clearable
@@ -131,7 +147,7 @@ const authenticatedPlayerOption = computed(() => {
                         <div class="space-y-2">
                             <EnhancedSelect
                                 v-model="gameForm.second_team_players[0]"
-                                :options="playerOptions"
+                                :options="availableSecondTeamFirstPlayer"
                                 placeholder="Select first player"
                                 :disabled="gameForm.processing"
                                 clearable
@@ -140,7 +156,7 @@ const authenticatedPlayerOption = computed(() => {
                             />
                             <EnhancedSelect
                                 v-model="gameForm.second_team_players[1]"
-                                :options="playerOptions"
+                                :options="availableSecondTeamSecondPlayer"
                                 placeholder="Select second player"
                                 :disabled="gameForm.processing"
                                 clearable
