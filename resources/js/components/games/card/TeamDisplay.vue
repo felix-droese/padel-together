@@ -11,7 +11,7 @@ function getEloChange(playerId: number) {
 
 <template>
     <div class="w-[200px]">
-        <div v-for="player in props.team.players" :key="player.id" class="grid grid-cols-[1fr_auto] items-center gap-2">
+        <div v-for="player in props.team.players" :key="player.id" class="grid grid-cols-[1fr_auto] items-start gap-2">
             <div class="mb-4 flex items-start gap-1 truncate">
                 <div class="flex flex-col">
                     <div class="flex items-center gap-1">
@@ -27,7 +27,7 @@ function getEloChange(playerId: number) {
                     'text-green-600': (getEloChange(player.id)?.change ?? 0) > 0,
                     'text-red-600': (getEloChange(player.id)?.change ?? 0) < 0,
                 }"
-                class="text-sm font-medium"
+                class="font-medium"
             >
                 {{ (getEloChange(player.id)?.change ?? 0) > 0 ? '+' : '' }}
                 {{ getEloChange(player.id)?.change }}
