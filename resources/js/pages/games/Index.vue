@@ -11,12 +11,15 @@ const props = defineProps<{
     games: App.DTOs.TGame[];
     openGames: App.DTOs.TGame[];
     locations: App.DTOs.TLocation[];
+    players: App.DTOs.TPlayer[];
 }>();
 const isGameFormVisible = ref(false);
 
 const gameForm = useForm({
     date: '',
     location_id: 0,
+    first_team_players: [] as number[],
+    second_team_players: [] as number[],
 });
 
 function submitGame() {
@@ -35,7 +38,7 @@ function submitGame() {
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-semibold">Create New Game</h2>
-                    <p class="text-sm text-muted-foreground">Create a new padel game with another player.</p>
+                    <p class="text-sm text-muted-foreground">Create a new padel game with other players.</p>
                 </div>
                 <Button @click="isGameFormVisible = !isGameFormVisible">
                     {{ isGameFormVisible ? 'Hide Form' : 'Show Form' }}
@@ -66,6 +69,84 @@ function submitGame() {
                     <InputError :message="gameForm.errors.location_id" />
                 </div>
 
+                <div class="space-y-2">
+                    <Label>First Team Players</Label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <Select v-model="gameForm.first_team_players[0]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        players.find((p) => p.id === gameForm.first_team_players[0])?.first_name +
+                                            ' ' +
+                                            players.find((p) => p.id === gameForm.first_team_players[0])?.last_name || 'Select first player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select v-model="gameForm.first_team_players[1]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        players.find((p) => p.id === gameForm.first_team_players[1])?.first_name +
+                                            ' ' +
+                                            players.find((p) => p.id === gameForm.first_team_players[1])?.last_name || 'Select second player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <InputError :message="gameForm.errors.first_team_players" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label>Second Team Players</Label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <Select v-model="gameForm.second_team_players[0]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        players.find((p) => p.id === gameForm.second_team_players[0])?.first_name +
+                                            ' ' +
+                                            players.find((p) => p.id === gameForm.second_team_players[0])?.last_name || 'Select first player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select v-model="gameForm.second_team_players[1]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        players.find((p) => p.id === gameForm.second_team_players[1])?.first_name +
+                                            ' ' +
+                                            players.find((p) => p.id === gameForm.second_team_players[1])?.last_name || 'Select second player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <InputError :message="gameForm.errors.second_team_players" />
+                </div>
+
                 <Button type="submit" :disabled="gameForm.processing">
                     {{ gameForm.processing ? 'Creating...' : 'Create Game' }}
                 </Button>
@@ -81,8 +162,10 @@ function submitGame() {
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="font-medium">
-                            {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }} vs
-                            {{ game.second_team?.players[0].first_name }} {{ game.second_team?.players[0].last_name }}
+                            {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }}
+                            {{ game.first_team.players[1] ? `& ${game.first_team.players[1].first_name} ${game.first_team.players[1].last_name}` : '' }} vs
+                            {{ game.second_team?.players[0]?.first_name }} {{ game.second_team?.players[0]?.last_name }}
+                            {{ game.second_team?.players[1] ? `& ${game.second_team.players[1].first_name} ${game.second_team.players[1].last_name}` : '' }}
                         </h3>
                         <p class="text-sm text-muted-foreground">
                             {{ new Date(game.date).toLocaleDateString() }} at {{ locations.find((l) => l.id === game.location_id)?.name }}

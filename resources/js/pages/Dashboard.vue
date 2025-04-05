@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <a :href="route('locations.index')">Locations</a>
             </Button>
 
-            <Index :games="props.games" :open-games="props.openGames" :locations="props.locations" />
+            <Index :games="props.games" :open-games="props.openGames" :locations="props.locations" :players="props.players" />
         </div>
     </AppLayout>
 </template>
