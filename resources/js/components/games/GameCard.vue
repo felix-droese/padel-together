@@ -72,24 +72,38 @@ watch(
             <div class="flex w-full items-start justify-between">
                 <div class="flex-1">
                     <div class="text-xs font-medium text-muted-foreground">Team 1</div>
-                    <div class="text-xs font-medium sm:text-base">
+                    <div
+                        class="text-xs font-medium sm:text-base"
+                        :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }"
+                    >
                         {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
                         <span class="text-xs text-muted-foreground">({{ props.game.first_team.players[0].elo }})</span>
                     </div>
-                    <div v-if="props.game.first_team.players[1]" class="text-xs font-medium sm:text-base">
+                    <div
+                        v-if="props.game.first_team.players[1]"
+                        class="text-xs font-medium sm:text-base"
+                        :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }"
+                    >
                         {{ props.game.first_team.players[1].first_name }} {{ props.game.first_team.players[1].last_name }}
                         <span class="text-xs text-muted-foreground">({{ props.game.first_team.players[1].elo }})</span>
                     </div>
                 </div>
                 <div class="flex-1">
                     <div class="text-xs font-medium text-muted-foreground">Team 2</div>
-                    <div class="text-xs font-medium sm:text-base">
+                    <div
+                        class="text-xs font-medium sm:text-base"
+                        :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }"
+                    >
                         {{ props.game.second_team?.players[0]?.first_name }} {{ props.game.second_team?.players[0]?.last_name }}
                         <span v-if="props.game.second_team?.players[0]" class="text-xs text-muted-foreground"
                             >({{ props.game.second_team.players[0].elo }})</span
                         >
                     </div>
-                    <div v-if="props.game.second_team?.players[1]" class="text-xs font-medium sm:text-base">
+                    <div
+                        v-if="props.game.second_team?.players[1]"
+                        class="text-xs font-medium sm:text-base"
+                        :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }"
+                    >
                         {{ props.game.second_team.players[1].first_name }} {{ props.game.second_team.players[1].last_name }}
                         <span class="text-xs text-muted-foreground">({{ props.game.second_team.players[1].elo }})</span>
                     </div>
@@ -163,16 +177,33 @@ watch(
             </div>
         </div>
         <div v-if="props.game.result" class="mt-6">
-            <div class="text-sm font-medium">Result:</div>
-            <div class="grid grid-cols-3 gap-2 text-sm">
-                <div class="text-muted-foreground">Set</div>
-                <div class="text-muted-foreground">First Team</div>
-                <div class="text-muted-foreground">Second Team</div>
-                <template v-for="(set, index) in props.game.result.sets" :key="index">
-                    <div>Set {{ index + 1 }}</div>
-                    <div>{{ set.first_team }}</div>
-                    <div>{{ set.second_team }}</div>
-                </template>
+            <div class="grid grid-cols-[120px_40px_40px_40px] gap-x-4 gap-y-1">
+                <div></div>
+                <div class="text-center text-muted-foreground">Set 1</div>
+                <div class="text-center text-muted-foreground">Set 2</div>
+                <div class="text-center text-muted-foreground">Set 3</div>
+
+                <div :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }">First Team</div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }">
+                    {{ props.game.result.sets[0].first_team }}
+                </div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }">
+                    {{ props.game.result.sets[1].first_team }}
+                </div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.first_team.id }">
+                    {{ props.game.result.sets[2].first_team }}
+                </div>
+
+                <div :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }">Second Team</div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }">
+                    {{ props.game.result.sets[0].second_team }}
+                </div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }">
+                    {{ props.game.result.sets[1].second_team }}
+                </div>
+                <div class="text-center" :class="{ 'text-green-600': props.game.winning_team?.id === props.game.second_team?.id }">
+                    {{ props.game.result.sets[2].second_team }}
+                </div>
             </div>
         </div>
     </div>

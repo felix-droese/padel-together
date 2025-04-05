@@ -8,6 +8,7 @@ declare namespace App.DTOs {
         first_team: App.DTOs.TTeam;
         second_team: App.DTOs.TTeam | null;
         result: App.DTOs.TGameResult | null;
+        winning_team: App.DTOs.TTeam | null;
     };
     export type TGameResult = {
         id: number;

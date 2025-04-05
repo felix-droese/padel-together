@@ -33,4 +33,30 @@ class Game extends Model
     {
         return $this->hasOne(GameResult::class);
     }
+
+    public function getWinningTeamAttribute(): ?Team
+    {
+        if (! $this->result) {
+            return null;
+        }
+
+        $firstTeamWins = 0;
+        $secondTeamWins = 0;
+
+        foreach ($this->result->sets as $set) {
+            if ($set['first_team'] > $set['second_team']) {
+                $firstTeamWins++;
+            } elseif ($set['second_team'] > $set['first_team']) {
+                $secondTeamWins++;
+            }
+        }
+
+        if ($firstTeamWins > $secondTeamWins) {
+            return $this->firstTeam;
+        } elseif ($secondTeamWins > $firstTeamWins) {
+            return $this->secondTeam;
+        }
+
+        return null; // Return null for a tie
+    }
 }

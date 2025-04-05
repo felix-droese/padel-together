@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\TGame;
 use App\DTOs\TLocation;
 use App\DTOs\TPlayer;
+use App\DTOs\TTeam;
 use App\Models\Game;
 use App\Models\Location;
 use App\Models\Player;
@@ -23,7 +24,12 @@ class GameController extends Controller
         $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result'])
             ->orderBy('date', 'desc')
             ->get()
-            ->map(fn ($game) => TGame::from($game));
+            ->map(function ($game) {
+                $tGame = TGame::from($game);
+                $tGame->winning_team = $game->winning_team ? TTeam::from($game->winning_team) : null;
+
+                return $tGame;
+            });
 
         return Inertia::render('games/Index', [
             'locations' => $locations,

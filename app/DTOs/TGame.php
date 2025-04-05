@@ -16,5 +16,6 @@ class TGame extends Data
         public TTeam $first_team,
         public ?TTeam $second_team,
         public ?TGameResult $result,
+        public ?TTeam $winning_team = null,
     ) {}
 }
