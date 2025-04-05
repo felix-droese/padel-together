@@ -64,7 +64,7 @@ watch(
             </Button>
         </PopoverButton>
         <PopoverPanel
-            class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="absolute z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
         >
             <div class="space-y-4 p-4">
                 <div class="space-y-2">

@@ -10,10 +10,12 @@ function getEloChange(playerId: number) {
 </script>
 
 <template>
-    <div class="space-y-1">
-        <div v-for="player in props.team.players" :key="player.id" class="flex items-center gap-2">
-            <span>{{ player.last_name }}</span>
-            <span v-if="player.elo" class="text-sm text-muted-foreground">({{ player.elo }})</span>
+    <div class="w-[200px]">
+        <div v-for="player in props.team.players" :key="player.id" class="grid grid-cols-[1fr_auto] items-center gap-2">
+            <div class="flex items-center gap-1 truncate">
+                <span class="truncate">{{ player.last_name }}</span>
+                <span v-if="player.elo" class="text-sm text-muted-foreground">{{ player.elo }}</span>
+            </div>
             <span
                 v-if="getEloChange(player.id)"
                 :class="{
