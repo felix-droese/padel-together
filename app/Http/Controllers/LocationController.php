@@ -9,6 +9,13 @@ use Inertia\Inertia;
 
 class LocationController extends Controller
 {
+    public function index()
+    {
+        return Inertia::render('locations/Index', [
+            'locations' => Location::all(),
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('locations/Create');
