@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Listbox v-model="model" :disabled="props.disabled" as="div" :class="cn('w-full', props.class)">
+  <Listbox v-model="model" :disabled="props.disabled" as="div" :class="cn('w-full', ($attrs.class as string | undefined))">
     <div class="relative">
       <slot :value="model" />
     </div>

@@ -37,7 +37,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="max-w-2xl space-y-16">
+        <div class="max-w-3xl space-y-16">
             <GameForm :locations="props.locations" :players="props.players" />
 
             <div class="mt-10">

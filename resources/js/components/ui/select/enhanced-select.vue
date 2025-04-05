@@ -49,7 +49,6 @@ function handleSearchInput(event: Event) {
 <template>
     <div class="flex gap-2">
         <Select
-            v-bind="$attrs"
             :model-value="modelValue"
             @update:model-value="emit('update:modelValue', $event)"
             :disabled="disabled"
@@ -71,7 +70,7 @@ function handleSearchInput(event: Event) {
                         class="w-full rounded-md border border-input bg-background px-8 py-1 text-sm outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
                     />
                 </div>
-                <div class="max-h-[200px] overflow-y-auto">
+                <div class="max-h-[300px] overflow-y-auto">
                     <SelectItem
                         v-for="option in filteredOptions"
                         :key="option.value"
