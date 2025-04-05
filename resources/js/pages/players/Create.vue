@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +21,19 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/',
     },
 ];
+
+const form = useForm({
+    first_name: '',
+    last_name: '',
+});
+
+function submit() {
+    form.post(route('players.store'), {
+        onSuccess: () => {
+            form.reset();
+        },
+    });
+}
 </script>
 
 <template>
@@ -25,7 +42,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="max-w-2xl">
             <h1 class="mb-8 text-2xl font-semibold">Create Player</h1>
-            <!-- TODO: Add player creation form -->
+
+            <form @submit.prevent="submit" class="space-y-4">
+                <div class="space-y-2">
+                    <Label for="first_name">First Name</Label>
+                    <Input id="first_name" v-model="form.first_name" type="text" placeholder="Enter first name" :disabled="form.processing" />
+                    <InputError :message="form.errors.first_name" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label for="last_name">Last Name</Label>
+                    <Input id="last_name" v-model="form.last_name" type="text" placeholder="Enter last name" :disabled="form.processing" />
+                    <InputError :message="form.errors.last_name" />
+                </div>
+
+                <Button type="submit" :disabled="form.processing">
+                    {{ form.processing ? 'Creating...' : 'Create Player' }}
+                </Button>
+            </form>
         </div>
     </AppLayout>
 </template>
