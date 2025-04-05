@@ -12,6 +12,7 @@ We are using the Laravel Framework for Backend with Inertia.js and Vue Files in 
     - Laravel Data for creating DTOs that can be passed to Vue Pages: https://spatie.be/docs/laravel-data/v4/introduction
 - Inertia Docs: https://inertiajs.com/
 - Vue Docs
+- we use sqlite for local development, but postgresql 17 for production use
 
 ## Laravel
 

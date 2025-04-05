@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
-import { Trash2 } from 'lucide-vue-next';
+import { Clock, MapPin, Trash2 } from 'lucide-vue-next';
 import { watch } from 'vue';
 
 const props = defineProps<{
@@ -69,7 +69,7 @@ watch(
 <template>
     <div class="rounded-lg border p-4">
         <div class="flex items-center justify-between">
-            <h3 class="font-medium">
+            <h3 class="text-xs font-medium sm:text-base">
                 {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
                 {{
                     props.game.first_team.players[1]
@@ -137,11 +137,19 @@ watch(
                 </div>
             </div>
         </div>
-        <p class="mr-4 text-sm text-muted-foreground">
-            {{ new Date(props.game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
-            {{ new Date(props.game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
-            {{ props.locations.find((l) => l.id === props.game.location_id)?.name }}
-        </p>
+        <div class="mt-2 flex items-center gap-4 text-[10px] text-muted-foreground sm:text-sm">
+            <div class="flex items-center gap-1">
+                <Clock class="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>
+                    {{ new Date(props.game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
+                    {{ new Date(props.game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }}
+                </span>
+            </div>
+            <div class="flex items-center gap-1">
+                <MapPin class="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>{{ props.locations.find((l) => l.id === props.game.location_id)?.name }}</span>
+            </div>
+        </div>
         <div v-if="props.game.result" class="mt-6">
             <div class="text-sm font-medium">Result:</div>
             <div class="grid grid-cols-3 gap-2 text-sm">

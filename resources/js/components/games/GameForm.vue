@@ -46,7 +46,7 @@ const playerOptions = computed(() => {
 
 <template>
     <div class="space-y-4">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-4">
             <div>
                 <h2 class="text-xl font-semibold">Create New Game</h2>
                 <p class="text-sm text-muted-foreground">Create a new padel game with other players.</p>
@@ -80,7 +80,7 @@ const playerOptions = computed(() => {
 
             <div class="space-y-2">
                 <Label>First Team Players</Label>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <EnhancedSelect
                         v-model="gameForm.first_team_players[0]"
                         :options="playerOptions"
@@ -103,7 +103,7 @@ const playerOptions = computed(() => {
 
             <div class="space-y-2">
                 <Label>Second Team Players</Label>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <EnhancedSelect
                         v-model="gameForm.second_team_players[0]"
                         :options="playerOptions"
