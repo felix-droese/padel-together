@@ -2,6 +2,7 @@
 
 namespace App\DTOs;
 
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 /** @typescript */
@@ -17,7 +18,8 @@ class TGame extends Data
         public ?TTeam $second_team,
         public ?TGameResult $result,
         public ?TTeam $winning_team,
-        /** @var \Illuminate\Support\Collection<int, TEloChange> */
-        public \Illuminate\Support\Collection $elo_changes,
+
+        /** @param Collection<int, TEloChange> $elo_changes */
+        public Collection $elo_changes,
     ) {}
 }

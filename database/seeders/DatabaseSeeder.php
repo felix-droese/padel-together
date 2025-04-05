@@ -2,13 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\EloChange;
 use App\Models\Game;
 use App\Models\Location;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Services\EloService;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -102,6 +104,37 @@ class DatabaseSeeder extends Seeder
             now()->subDays(3),
             [[4, 6], [6, 4], [6, 2]] // Sascha/Simon win
         );
+
+        // Create more games to establish realistic ELO ratings
+        $this->createGameWithResult(
+            $createdPlayers[2], // Tobias
+            $createdPlayers[3], // Yannik
+            $createdPlayers[4], // Sascha
+            $createdPlayers[5], // Simon
+            $locations[0], // Rummenigge
+            now()->subDays(2),
+            [[6, 3], [6, 4]] // Tobias/Yannik win
+        );
+
+        $this->createGameWithResult(
+            $createdPlayers[1], // Stefan
+            $createdPlayers[6], // Paul
+            $createdPlayers[0], // Felix
+            $createdPlayers[3], // Yannik
+            $locations[1], // TC Union
+            now()->subDays(1),
+            [[6, 4], [7, 5]] // Stefan/Paul win
+        );
+
+        $this->createGameWithResult(
+            $createdPlayers[3], // Yannik
+            $createdPlayers[4], // Sascha
+            $createdPlayers[1], // Stefan
+            $createdPlayers[5], // Simon
+            $locations[2], // Padel Club Hamburg
+            now()->subHours(12),
+            [[6, 2], [6, 3]] // Yannik/Sascha win
+        );
     }
 
     private function createGameWithResult(
@@ -132,5 +165,22 @@ class DatabaseSeeder extends Seeder
         $game->result()->create([
             'sets' => array_map(fn ($set) => ['first_team' => $set[0], 'second_team' => $set[1]], $sets),
         ]);
+
+        // Calculate and apply ELO changes
+        $newRatings = EloService::calculateNewRatings($player1, $player2, $player3, $player4);
+
+        // Store ELO changes for each player
+        foreach ($newRatings as $playerId => $newRating) {
+            $player = Player::find($playerId);
+            $change = $newRating - $player->elo;
+
+            EloChange::create([
+                'game_id' => $game->id,
+                'player_id' => $playerId,
+                'change' => $change,
+            ]);
+
+            $player->update(['elo' => $newRating]);
+        }
     }
 }
