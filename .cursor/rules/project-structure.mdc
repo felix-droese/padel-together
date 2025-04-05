@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# General Technology
+
+We are using the Laravel Framework for Backend with Inertia.js and Vue Files in the frontend.
+
+- Laravel Docs: https://laravel.com/docs/12.x
+- Inertia Docs: https://inertiajs.com/
+- Vue Docs
+
+## Laravel
+
+### Controllers
+
+In Controllers, when we return our "views", we return Inertia-Pages with Inertia::render(...);
+
+### Models
+- when creating new model classes, use
+    - ```public function $guarded = [];```
+
+## Vue 
+
+### General Design Decisions
+- we use composition API: https://vuejs.org/guide/extras/composition-api-faq.html
