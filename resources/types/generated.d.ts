@@ -33,6 +33,7 @@ id: number;
 players: Array<App.DTOs.TPlayer>;
 };
 export type TUser = {
+id: number;
 email: string | null;
 };
 }
