@@ -53,23 +53,17 @@ const playerOptions = computed(() => {
 });
 
 const availableSecondTeamFirstPlayer = computed(() => {
-    // Get all selected players except the current position
     const selectedPlayers = [gameForm.first_team_players[1], gameForm.second_team_players[1]].filter(Boolean);
-
     return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
 });
 
 const availableSecondTeamSecondPlayer = computed(() => {
-    // Get all selected players except the current position
     const selectedPlayers = [gameForm.first_team_players[1], gameForm.second_team_players[0]].filter(Boolean);
-
     return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
 });
 
 const availableFirstTeamSecondPlayer = computed(() => {
-    // Get all selected players except the current position
     const selectedPlayers = [gameForm.second_team_players[0], gameForm.second_team_players[1]].filter(Boolean);
-
     return playerOptions.value.filter((option) => !selectedPlayers.includes(option.value));
 });
 

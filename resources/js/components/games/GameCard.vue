@@ -69,7 +69,7 @@ watch(
 <template>
     <div class="rounded-lg border p-4">
         <div class="flex items-center justify-between">
-            <div class="flex w-full items-center justify-between">
+            <div class="flex w-full items-start justify-between">
                 <div class="flex-1">
                     <div class="text-xs font-medium text-muted-foreground">Team 1</div>
                     <div class="text-xs font-medium sm:text-base">
