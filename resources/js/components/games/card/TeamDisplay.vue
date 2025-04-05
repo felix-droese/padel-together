@@ -18,7 +18,7 @@ function getEloChange(playerId: number) {
                         <span class="truncate">{{ player.last_name }}</span>
                         <span v-if="player.elo" class="text-muted-foreground">{{ player.elo }}</span>
                     </div>
-                    <span class="text-sm">hallo</span>
+                    <span class="text-sm">{{ player.first_name }}</span>
                 </div>
             </div>
             <span
