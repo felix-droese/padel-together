@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps<{
     locations: App.DTOs.TLocation[];
@@ -27,10 +28,13 @@ const gameForm = useForm({
     location_id: 0,
 });
 
+const isGameFormVisible = ref(false);
+
 function submitGame() {
     gameForm.post(route('games.store'), {
         onSuccess: () => {
             gameForm.reset();
+            isGameFormVisible.value = false;
         },
     });
 }
@@ -40,22 +44,65 @@ function submitGame() {
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="max-w-2xl space-y-6">
+        <div class="max-w-2xl space-y-16">
             <div class="space-y-2">
-                <h2 class="text-xl font-semibold">Locations</h2>
-                <p class="text-sm text-muted-foreground">Manage your padel match locations.</p>
-            </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold">Locations</h2>
+                        <p class="text-sm text-muted-foreground">Manage your padel match locations.</p>
+                    </div>
+                    <Button as-child>
+                        <a :href="route('locations.create')">Create New Location</a>
+                    </Button>
+                </div>
 
-            <div class="flex items-center justify-between">
                 <div v-if="props.locations.length === 0" class="text-sm text-muted-foreground">No locations have been created yet.</div>
-                <div v-else class="grid w-full gap-4">
+                <div v-else class="grid gap-4">
                     <div v-for="location in props.locations" :key="location.id" class="rounded-lg border p-4">
                         <h3 class="font-medium">{{ location.name }}</h3>
                     </div>
                 </div>
-                <Button as-child>
-                    <a :href="route('locations.create')">Create New Location</a>
-                </Button>
+            </div>
+
+            <div class="mt-10 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold">Create New Game</h2>
+                        <p class="text-sm text-muted-foreground">Create a new padel game with another player.</p>
+                    </div>
+                    <Button @click="isGameFormVisible = !isGameFormVisible">
+                        {{ isGameFormVisible ? 'Hide Form' : 'Show Form' }}
+                    </Button>
+                </div>
+
+                <form v-if="isGameFormVisible" @submit.prevent="submitGame" class="space-y-4">
+                    <div class="space-y-2">
+                        <Label for="date">Game Date</Label>
+                        <Input id="date" v-model="gameForm.date" type="date" :disabled="gameForm.processing" />
+                        <InputError :message="gameForm.errors.date" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="location">Location</Label>
+                        <Select v-model="gameForm.location_id" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{ locations.find((l) => l.id === gameForm.location_id)?.name || 'Select a location' }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="location in locations" :key="location.id" :value="location.id">
+                                    {{ location.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="gameForm.errors.location_id" />
+                    </div>
+
+                    <Button type="submit" :disabled="gameForm.processing">
+                        {{ gameForm.processing ? 'Creating...' : 'Create Game' }}
+                    </Button>
+                </form>
             </div>
 
             <div class="space-y-4">
@@ -77,40 +124,6 @@ function submitGame() {
                     </div>
                 </div>
             </div>
-
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold">Create New Game</h2>
-                <p class="text-sm text-muted-foreground">Create a new padel game with another player.</p>
-            </div>
-
-            <form @submit.prevent="submitGame" class="space-y-4">
-                <div class="space-y-2">
-                    <Label for="date">Game Date</Label>
-                    <Input id="date" v-model="gameForm.date" type="date" :disabled="gameForm.processing" />
-                    <InputError :message="gameForm.errors.date" />
-                </div>
-
-                <div class="space-y-2">
-                    <Label for="location">Location</Label>
-                    <Select v-model="gameForm.location_id" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{ locations.find((l) => l.id === gameForm.location_id)?.name || 'Select a location' }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="location in locations" :key="location.id" :value="location.id">
-                                {{ location.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="gameForm.errors.location_id" />
-                </div>
-
-                <Button type="submit" :disabled="gameForm.processing">
-                    {{ gameForm.processing ? 'Creating...' : 'Create Game' }}
-                </Button>
-            </form>
 
             <div class="space-y-4">
                 <h2 class="text-xl font-semibold">Recent Games</h2>
