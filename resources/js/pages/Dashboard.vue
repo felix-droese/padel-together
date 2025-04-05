@@ -3,7 +3,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select/index';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -96,27 +96,6 @@ function submitGame() {
                         </SelectContent>
                     </Select>
                     <InputError :message="gameForm.errors.location_id" />
-                </div>
-
-                <div class="space-y-2">
-                    <Label for="opponent">Opponent</Label>
-                    <Select v-model="gameForm.second_team_player_id" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{
-                                    players.find((p) => p.id === gameForm.second_team_player_id)?.first_name +
-                                        ' ' +
-                                        players.find((p) => p.id === gameForm.second_team_player_id)?.last_name || 'Select an opponent'
-                                }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="player in players" :key="player.id" :value="player.id">
-                                {{ player.first_name }} {{ player.last_name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="gameForm.errors.second_team_player_id" />
                 </div>
 
                 <Button type="submit" :disabled="gameForm.processing">
