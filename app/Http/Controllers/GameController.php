@@ -76,4 +76,30 @@ class GameController extends Controller
 
         return redirect()->back();
     }
+
+    public function updateResult(Request $request, Game $game)
+    {
+        $validated = $request->validate([
+            'sets' => ['required', 'array', 'min:1', 'max:3'],
+            'sets.*.first_team' => ['nullable', 'integer', 'min:0', 'max:7'],
+            'sets.*.second_team' => ['nullable', 'integer', 'min:0', 'max:7'],
+        ]);
+
+        // Validate that the game has a result
+        if (! $game->result()->exists()) {
+            return back()->withErrors(['sets' => 'This game does not have a result to update.']);
+        }
+
+        // Filter out any sets where both scores are null
+        $validSets = array_filter($validated['sets'], function ($set) {
+            return ! is_null($set['first_team']) || ! is_null($set['second_team']);
+        });
+
+        // Update the game result
+        $game->result()->update([
+            'sets' => array_values($validSets),
+        ]);
+
+        return redirect()->back();
+    }
 }
