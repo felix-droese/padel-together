@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select/index';
 import { useForm } from '@inertiajs/vue3';
+import { X } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -16,8 +17,8 @@ const isGameFormVisible = ref(false);
 const gameForm = useForm({
     date: '',
     location_id: 0,
-    first_team_players: [] as number[],
-    second_team_players: [] as number[],
+    first_team_players: [] as (number | undefined)[],
+    second_team_players: [] as (number | undefined)[],
 });
 
 function submitGame() {
@@ -69,38 +70,62 @@ function submitGame() {
             <div class="space-y-2">
                 <Label>First Team Players</Label>
                 <div class="grid grid-cols-2 gap-4">
-                    <Select v-model="gameForm.first_team_players[0]" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{
-                                    props.players.find((p) => p.id === gameForm.first_team_players[0])?.first_name +
-                                        ' ' +
-                                        props.players.find((p) => p.id === gameForm.first_team_players[0])?.last_name || 'Select first player'
-                                }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
-                                {{ player.first_name }} {{ player.last_name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select v-model="gameForm.first_team_players[1]" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{
-                                    props.players.find((p) => p.id === gameForm.first_team_players[1])?.first_name +
-                                        ' ' +
-                                        props.players.find((p) => p.id === gameForm.first_team_players[1])?.last_name || 'Select second player'
-                                }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
-                                {{ player.first_name }} {{ player.last_name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div class="flex gap-2">
+                        <Select v-model="gameForm.first_team_players[0]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        (props.players.find((p) => p.id === gameForm.first_team_players[0])?.first_name || '') +
+                                            ' ' +
+                                            (props.players.find((p) => p.id === gameForm.first_team_players[0])?.last_name || '') ||
+                                        'Select first player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            v-if="gameForm.first_team_players[0]"
+                            @click="gameForm.first_team_players[0] = undefined"
+                            variant="ghost"
+                            size="icon"
+                            class="h-10 w-10"
+                        >
+                            <X class="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <div class="flex gap-2">
+                        <Select v-model="gameForm.first_team_players[1]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        (props.players.find((p) => p.id === gameForm.first_team_players[1])?.first_name || '') +
+                                            ' ' +
+                                            (props.players.find((p) => p.id === gameForm.first_team_players[1])?.last_name || '') ||
+                                        'Select second player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            v-if="gameForm.first_team_players[1]"
+                            @click="gameForm.first_team_players[1] = undefined"
+                            variant="ghost"
+                            size="icon"
+                            class="h-10 w-10"
+                        >
+                            <X class="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
                 <InputError :message="gameForm.errors.first_team_players" />
             </div>
@@ -108,38 +133,62 @@ function submitGame() {
             <div class="space-y-2">
                 <Label>Second Team Players</Label>
                 <div class="grid grid-cols-2 gap-4">
-                    <Select v-model="gameForm.second_team_players[0]" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{
-                                    props.players.find((p) => p.id === gameForm.second_team_players[0])?.first_name +
-                                        ' ' +
-                                        props.players.find((p) => p.id === gameForm.second_team_players[0])?.last_name || 'Select first player'
-                                }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
-                                {{ player.first_name }} {{ player.last_name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select v-model="gameForm.second_team_players[1]" :disabled="gameForm.processing">
-                        <SelectTrigger>
-                            <SelectValue>
-                                {{
-                                    props.players.find((p) => p.id === gameForm.second_team_players[1])?.first_name +
-                                        ' ' +
-                                        props.players.find((p) => p.id === gameForm.second_team_players[1])?.last_name || 'Select second player'
-                                }}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
-                                {{ player.first_name }} {{ player.last_name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div class="flex gap-2">
+                        <Select v-model="gameForm.second_team_players[0]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        (props.players.find((p) => p.id === gameForm.second_team_players[0])?.first_name || '') +
+                                            ' ' +
+                                            (props.players.find((p) => p.id === gameForm.second_team_players[0])?.last_name || '') ||
+                                        'Select first player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            v-if="gameForm.second_team_players[0]"
+                            @click="gameForm.second_team_players[0] = undefined"
+                            variant="ghost"
+                            size="icon"
+                            class="h-10 w-10"
+                        >
+                            <X class="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <div class="flex gap-2">
+                        <Select v-model="gameForm.second_team_players[1]" :disabled="gameForm.processing">
+                            <SelectTrigger>
+                                <SelectValue>
+                                    {{
+                                        (props.players.find((p) => p.id === gameForm.second_team_players[1])?.first_name || '') +
+                                            ' ' +
+                                            (props.players.find((p) => p.id === gameForm.second_team_players[1])?.last_name || '') ||
+                                        'Select second player'
+                                    }}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="player in props.players" :key="player.id" :value="player.id">
+                                    {{ player.first_name }} {{ player.last_name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            v-if="gameForm.second_team_players[1]"
+                            @click="gameForm.second_team_players[1] = undefined"
+                            variant="ghost"
+                            size="icon"
+                            class="h-10 w-10"
+                        >
+                            <X class="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
                 <InputError :message="gameForm.errors.second_team_players" />
             </div>
