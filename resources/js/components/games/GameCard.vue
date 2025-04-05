@@ -2,18 +2,12 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 const props = defineProps<{
     game: App.DTOs.TGame;
     locations: App.DTOs.TLocation[];
 }>();
-
-const openResultPopover = ref<number | null>(null);
-
-function toggleResultPopover(gameId: number) {
-    openResultPopover.value = openResultPopover.value === gameId ? null : gameId;
-}
 
 const resultForm = useForm({
     game_id: 0,
@@ -26,10 +20,11 @@ const resultForm = useForm({
 
 function submitResult(gameId: number) {
     const routeName = props.game.result ? 'games.result.update' : 'games.result';
-    resultForm.put(route(routeName, { game: gameId }), {
+    const method = props.game.result ? 'put' : 'post';
+
+    resultForm[method](route(routeName, { game: gameId }), {
         onSuccess: () => {
             resultForm.reset();
-            openResultPopover.value = null;
         },
     });
 }
@@ -80,14 +75,13 @@ watch(
                 }}
             </h3>
             <div class="relative">
-                <Popover>
+                <Popover v-slot="{ close }">
                     <PopoverButton as="div">
-                        <Button variant="outline" @click="toggleResultPopover(props.game.id)">
+                        <Button variant="outline">
                             {{ props.game.result ? 'Edit Result' : 'Add Result' }}
                         </Button>
                     </PopoverButton>
                     <PopoverPanel
-                        v-if="openResultPopover === props.game.id"
                         class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     >
                         <div class="space-y-4 p-4">
@@ -118,9 +112,12 @@ watch(
                                     />
                                 </div>
                             </div>
-                            <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="w-full">
-                                {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
-                            </Button>
+                            <div class="flex gap-2">
+                                <Button @click="close" variant="outline" class="flex-1">Cancel</Button>
+                                <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="flex-1">
+                                    {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
+                                </Button>
+                            </div>
                         </div>
                     </PopoverPanel>
                 </Popover>
