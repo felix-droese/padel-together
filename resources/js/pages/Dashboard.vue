@@ -7,6 +7,15 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
 
+interface Location {
+    id: number;
+    name: string;
+}
+
+defineProps<{
+    locations: Location[];
+}>();
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -48,6 +57,16 @@ const submit = () => {
                     {{ form.processing ? 'Creating...' : 'Create Location' }}
                 </Button>
             </form>
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold">Existing Locations</h2>
+                <div v-if="locations.length === 0" class="text-sm text-muted-foreground">No locations have been created yet.</div>
+                <div v-else class="grid gap-4">
+                    <div v-for="location in locations" :key="location.id" class="rounded-lg border p-4">
+                        <h3 class="font-medium">{{ location.name }}</h3>
+                    </div>
+                </div>
+            </div>
         </div>
     </AppLayout>
 </template>

@@ -9,6 +9,7 @@ alwaysApply: true
 We are using the Laravel Framework for Backend with Inertia.js and Vue Files in the frontend.
 
 - Laravel Docs: https://laravel.com/docs/12.x
+    - Laravel Data for creating DTOs that can be passed to Vue Pages: https://spatie.be/docs/laravel-data/v4/introduction
 - Inertia Docs: https://inertiajs.com/
 - Vue Docs
 
@@ -18,14 +19,23 @@ We are using the Laravel Framework for Backend with Inertia.js and Vue Files in 
 
 In Controllers, when we return our "views", we return Inertia-Pages with Inertia::render(...);
 
+- when passing props to Inertia-Pages, use Spatie-Data objects.
+
 ### Models
 - when creating new model classes, use
     - ```public function $guarded = [];```
+
+### DTOs (Laravel Data)
+
+- prefix names with T, e.g. the player data class becomes TPlayer
+- DTO-Files live in the ./app/DTOs directory
+- do not pass the database timestamps created_at and updated_at to the data objects 
 
 ## Vue 
 
 ### General Design Decisions
 - we use composition API: https://vuejs.org/guide/extras/composition-api-faq.html
+- when defining props, use ``` const props = defineProps<{...}> ``` and refer to the props via props.<property-name> in the rest of the file
 
 ### Creating forms
 
