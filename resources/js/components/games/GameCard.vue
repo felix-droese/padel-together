@@ -69,20 +69,26 @@ watch(
 <template>
     <div class="rounded-lg border p-4">
         <div class="flex items-center justify-between">
-            <h3 class="text-xs font-medium sm:text-base">
-                {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
-                {{
-                    props.game.first_team.players[1]
-                        ? `/ ${props.game.first_team.players[1].first_name} ${props.game.first_team.players[1].last_name}`
-                        : ''
-                }}
-                vs {{ props.game.second_team?.players[0]?.first_name }} {{ props.game.second_team?.players[0]?.last_name }}
-                {{
-                    props.game.second_team?.players[1]
-                        ? `/ ${props.game.second_team.players[1].first_name} ${props.game.second_team.players[1].last_name}`
-                        : ''
-                }}
-            </h3>
+            <div class="flex w-full items-center justify-between">
+                <div class="flex-1">
+                    <div class="text-xs font-medium text-muted-foreground">Team 1</div>
+                    <div class="text-xs font-medium sm:text-base">
+                        {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
+                    </div>
+                    <div v-if="props.game.first_team.players[1]" class="text-xs font-medium sm:text-base">
+                        {{ props.game.first_team.players[1].first_name }} {{ props.game.first_team.players[1].last_name }}
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div class="text-xs font-medium text-muted-foreground">Team 2</div>
+                    <div class="text-xs font-medium sm:text-base">
+                        {{ props.game.second_team?.players[0]?.first_name }} {{ props.game.second_team?.players[0]?.last_name }}
+                    </div>
+                    <div v-if="props.game.second_team?.players[1]" class="text-xs font-medium sm:text-base">
+                        {{ props.game.second_team.players[1].first_name }} {{ props.game.second_team.players[1].last_name }}
+                    </div>
+                </div>
+            </div>
             <div class="relative">
                 <div class="flex items-center gap-2">
                     <Button variant="ghost" size="icon" @click="deleteGame">
