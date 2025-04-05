@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Location;
 use App\Models\Player;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -27,6 +28,10 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
+        ]);
+
+        Location::create([
+            'name' => 'Rummenigge',
         ]);
     }
 }

@@ -11,6 +11,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 const props = defineProps<{
     locations: App.DTOs.TLocation[];
     players: App.DTOs.TPlayer[];
+    games: App.DTOs.TGame[];
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -26,8 +27,7 @@ const locationForm = useForm({
 
 const gameForm = useForm({
     date: '',
-    location_id: '',
-    second_team_player_id: '',
+    location_id: 0,
 });
 
 function submitLocation() {
@@ -109,6 +109,26 @@ function submitGame() {
                 <div v-else class="grid gap-4">
                     <div v-for="location in props.locations" :key="location.id" class="rounded-lg border p-4">
                         <h3 class="font-medium">{{ location.name }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold">Recent Games</h2>
+                <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No games have been played yet.</div>
+                <div v-else class="grid gap-4">
+                    <div v-for="game in props.games" :key="game.id" class="rounded-lg border p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-medium">
+                                    {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }} vs
+                                    {{ game.second_team?.players[0].first_name }} {{ game.second_team?.players[0].last_name }}
+                                </h3>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ new Date(game.date).toLocaleDateString() }} at {{ locations.find((l) => l.id === game.location_id)?.name }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

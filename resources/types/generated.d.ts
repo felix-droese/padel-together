@@ -5,6 +5,8 @@ first_team_id: number;
 second_team_id: number;
 date: string;
 location_id: number;
+first_team: App.DTOs.TTeam;
+second_team: App.DTOs.TTeam;
 };
 export type TLocation = {
 id: number;
@@ -17,5 +19,6 @@ last_name: string;
 };
 export type TTeam = {
 id: number;
+players: Array<App.DTOs.TPlayer>;
 };
 }

@@ -30,6 +30,7 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 - prefix names with T, e.g. the player data class becomes TPlayer
 - DTO-Files live in the ./app/DTOs directory
 - do not pass the database timestamps created_at and updated_at to the data objects 
+- for collects try to use TPlayer::collect(...) syntax. use map only when necessary
 
 ## Vue 
 
