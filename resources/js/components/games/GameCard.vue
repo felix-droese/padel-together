@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { useForm } from '@inertiajs/vue3';
 import { Trash2 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import GameMetadata from './card/GameMetadata.vue';
 import GameResultDisplay from './card/GameResultDisplay.vue';
 import GameResultForm from './card/GameResultForm.vue';
@@ -19,6 +20,12 @@ function deleteGame() {
         deleteForm.delete(route('games.destroy', { game: props.game.id }));
     }
 }
+
+const canEditResult = computed(() => {
+    const firstTeamHasTwoPlayers = props.game.first_team.players.length === 2;
+    const secondTeamHasTwoPlayers = props.game.second_team?.players.length === 2;
+    return firstTeamHasTwoPlayers && secondTeamHasTwoPlayers;
+});
 </script>
 
 <template>
@@ -37,7 +44,7 @@ function deleteGame() {
                     <Button variant="ghost" size="icon" @click="deleteGame">
                         <Trash2 class="h-5 w-5 text-red-500" />
                     </Button>
-                    <GameResultForm :game="props.game" />
+                    <GameResultForm v-if="canEditResult" :game="props.game" />
                 </div>
             </div>
         </div>
