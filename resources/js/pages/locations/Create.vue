@@ -9,11 +9,11 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Locations',
+        href: '/locations',
     },
     {
-        title: 'Create Location',
+        title: 'Create',
         href: '/locations/create',
     },
 ];
