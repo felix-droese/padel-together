@@ -30,6 +30,21 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'Doe',
         ]);
 
+        $users = collect();
+        for ($i = 0; $i < 4; $i++) {
+            $users->push(User::factory()->create([
+                'name' => fake()->name(),
+                'email' => "user{$i}@example.com",
+                'password' => Hash::make('1234'),
+            ]));
+        }
+
+        $users->each(function ($user) {
+            Player::factory()->create([
+                'user_id' => $user->id,
+            ]);
+        });
+
         Location::create([
             'name' => 'Rummenigge',
         ]);
