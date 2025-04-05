@@ -58,24 +58,27 @@ const playerOptions = computed(() => {
 
         <form v-if="isGameFormVisible" @submit.prevent="submitGame" class="space-y-4">
             <div class="space-y-2">
-                <Label for="date">Game Date</Label>
-                <div class="w-[300px]">
-                    <VueDatePicker v-model="gameForm.date" />
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                        <Label for="date">Game Date</Label>
+                        <div class="w-[300px]">
+                            <VueDatePicker v-model="gameForm.date" />
+                        </div>
+                        <InputError :message="gameForm.errors.date" />
+                    </div>
+                    <div>
+                        <Label for="location">Location</Label>
+                        <EnhancedSelect
+                            v-model="gameForm.location_id"
+                            :options="locationOptions"
+                            placeholder="Select a location"
+                            :disabled="gameForm.processing"
+                            clearable
+                            class="w-[300px]"
+                        />
+                        <InputError :message="gameForm.errors.location_id" />
+                    </div>
                 </div>
-                <InputError :message="gameForm.errors.date" />
-            </div>
-
-            <div class="space-y-2">
-                <Label for="location">Location</Label>
-                <EnhancedSelect
-                    v-model="gameForm.location_id"
-                    :options="locationOptions"
-                    placeholder="Select a location"
-                    :disabled="gameForm.processing"
-                    clearable
-                    class="w-[300px]"
-                />
-                <InputError :message="gameForm.errors.location_id" />
             </div>
 
             <div class="space-y-2">
