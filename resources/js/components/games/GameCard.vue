@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { useForm } from '@inertiajs/vue3';
+import type { SharedData } from '@/types';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import GameMetadata from './card/GameMetadata.vue';
@@ -12,6 +13,9 @@ const props = defineProps<{
     game: App.DTOs.TGame;
     locations: App.DTOs.TLocation[];
 }>();
+
+const page = usePage<SharedData>();
+const auth = computed(() => page.props.auth);
 
 const deleteForm = useForm({});
 
@@ -26,6 +30,16 @@ const canEditResult = computed(() => {
     const secondTeamHasTwoPlayers = props.game.second_team?.players.length === 2;
     return firstTeamHasTwoPlayers && secondTeamHasTwoPlayers;
 });
+
+const isPlayerInGame = computed(() => {
+    if (!auth.value.user) return false;
+
+    const userId = auth.value.user.id;
+    const firstTeamPlayers = props.game.first_team.players.map((p) => p.id);
+    const secondTeamPlayers = props.game.second_team?.players.map((p) => p.id) || [];
+
+    return firstTeamPlayers.includes(userId) || secondTeamPlayers.includes(userId);
+});
 </script>
 
 <template>
@@ -36,7 +50,7 @@ const canEditResult = computed(() => {
                 <span class="mx-8 text-muted-foreground">vs</span>
                 <TeamDisplay v-if="props.game.second_team" :team="props.game.second_team" :elo-changes="props.game.elo_changes" />
             </div>
-            <div class="flex items-center gap-2">
+            <div v-if="isPlayerInGame" class="flex items-center gap-2">
                 <GameResultForm v-if="canEditResult" :game="props.game" />
                 <Button variant="ghost" size="icon" @click="deleteGame">
                     <Trash2 class="h-4 w-4" />
