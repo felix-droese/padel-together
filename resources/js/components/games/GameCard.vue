@@ -143,7 +143,7 @@ watch(
                 </div>
             </div>
         </div>
-        <div class="mt-2 flex items-center gap-4 text-[10px] text-muted-foreground sm:text-sm">
+        <div class="mt-4 flex items-center gap-4 text-[10px] text-muted-foreground sm:text-sm">
             <div class="flex items-center gap-1">
                 <Clock class="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>
