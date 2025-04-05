@@ -16,7 +16,9 @@ const props = defineProps<{
         <div class="mt-10">
             <h2 class="mt-10 text-xl font-semibold"></h2>
             <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
-            <div v-else class="grid gap-4">
+            <div v-else class="mt-16 grid gap-4">
+                <h3 class="text-lg font-semibold">Games</h3>
+
                 <GameCard v-for="game in props.games" :key="game.id" :game="game" :locations="props.locations" />
             </div>
         </div>
