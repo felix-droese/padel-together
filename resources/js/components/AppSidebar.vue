@@ -18,8 +18,8 @@ const isAdmin = computed(() => {
 const mainNavItems = computed(() => {
     const items: NavItem[] = [
         {
-            title: 'Dashboard',
-            href: '/dashboard',
+            title: 'Games',
+            href: '/games',
             icon: LayoutGrid,
         },
     ];
@@ -57,7 +57,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('games')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

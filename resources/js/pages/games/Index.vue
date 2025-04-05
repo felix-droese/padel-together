@@ -1,26 +1,37 @@
 <script setup lang="ts">
 import GameCard from '@/components/games/GameCard.vue';
 import GameForm from '@/components/games/GameForm.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
 
 const props = defineProps<{
     games: App.DTOs.TGame[];
     locations: App.DTOs.TLocation[];
     players: App.DTOs.TPlayer[];
 }>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Games',
+        href: '/games',
+    },
+];
 </script>
 
 <template>
-    <div>
-        <GameForm :locations="props.locations" :players="props.players" />
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="max-w-2xl space-y-16">
+            <GameForm :locations="props.locations" :players="props.players" />
 
-        <div class="mt-10">
-            <h2 class="mt-10 text-xl font-semibold"></h2>
-            <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
-            <div v-else class="mt-16 grid gap-4">
-                <h3 class="text-lg font-semibold">Games</h3>
+            <div class="mt-10">
+                <h2 class="mt-10 text-xl font-semibold"></h2>
+                <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
+                <div v-else class="mt-16 grid gap-4">
+                    <h3 class="text-lg font-semibold">Games</h3>
 
-                <GameCard v-for="game in props.games" :key="game.id" :game="game" :locations="props.locations" />
+                    <GameCard v-for="game in props.games" :key="game.id" :game="game" :locations="props.locations" />
+                </div>
             </div>
         </div>
-    </div>
+    </AppLayout>
 </template>

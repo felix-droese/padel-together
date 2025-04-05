@@ -1,24 +1,22 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     if (! Auth::check()) {
         return redirect()->route('login');
     }
 
-    return redirect()->route('dashboard');
+    return redirect()->route('games');
 })->name('home');
 
-Route::get('dashboard', [DashboardController::class, 'index'])
+Route::get('games', [GameController::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('games');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('locations/create', [LocationController::class, 'create'])->name('locations.create');

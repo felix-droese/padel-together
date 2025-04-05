@@ -10,7 +10,7 @@ use App\Models\Location;
 use App\Models\Player;
 use Inertia\Inertia;
 
-class DashboardController extends Controller
+class GamesController extends Controller
 {
     public function index()
     {
