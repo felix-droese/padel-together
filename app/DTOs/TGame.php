@@ -16,6 +16,8 @@ class TGame extends Data
         public TTeam $first_team,
         public ?TTeam $second_team,
         public ?TGameResult $result,
-        public ?TTeam $winning_team = null,
+        public ?TTeam $winning_team,
+        /** @var \Illuminate\Support\Collection<int, TEloChange> */
+        public \Illuminate\Support\Collection $elo_changes,
     ) {}
 }

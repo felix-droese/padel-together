@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\TEloChange;
 use App\DTOs\TGame;
 use App\DTOs\TLocation;
 use App\DTOs\TPlayer;
 use App\DTOs\TTeam;
+use App\Models\EloChange;
 use App\Models\Game;
 use App\Models\Location;
 use App\Models\Player;
 use App\Models\Team;
+use App\Services\EloService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -21,12 +24,13 @@ class GameController extends Controller
     {
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($game) {
                 $tGame = TGame::from($game);
                 $tGame->winning_team = $game->winning_team ? TTeam::from($game->winning_team) : null;
+                $tGame->elo_changes = $game->eloChanges->map(fn ($change) => TEloChange::from($change));
 
                 return $tGame;
             });
@@ -104,6 +108,35 @@ class GameController extends Controller
             'sets' => array_values($validSets),
         ]);
 
+        // Update ELO ratings if there's a winning team
+        if ($game->winning_team) {
+            $winningTeam = $game->winning_team;
+            $losingTeam = $winningTeam->id === $game->first_team_id ? $game->secondTeam : $game->firstTeam;
+
+            if ($winningTeam && $losingTeam) {
+                $newRatings = EloService::calculateNewRatings(
+                    $winningTeam->players[0],
+                    $winningTeam->players[1],
+                    $losingTeam->players[0],
+                    $losingTeam->players[1]
+                );
+
+                // Store ELO changes for each player
+                foreach ($newRatings as $playerId => $newRating) {
+                    $player = Player::find($playerId);
+                    $change = $newRating - $player->elo;
+
+                    EloChange::create([
+                        'game_id' => $game->id,
+                        'player_id' => $playerId,
+                        'change' => $change,
+                    ]);
+
+                    $player->update(['elo' => $newRating]);
+                }
+            }
+        }
+
         return redirect()->back();
     }
 
@@ -129,6 +162,38 @@ class GameController extends Controller
         $game->result()->update([
             'sets' => array_values($validSets),
         ]);
+
+        // Delete existing ELO changes for this game
+        EloChange::where('game_id', $game->id)->delete();
+
+        // Update ELO ratings if there's a winning team
+        if ($game->winning_team) {
+            $winningTeam = $game->winning_team;
+            $losingTeam = $winningTeam->id === $game->first_team_id ? $game->secondTeam : $game->firstTeam;
+
+            if ($winningTeam && $losingTeam) {
+                $newRatings = EloService::calculateNewRatings(
+                    $winningTeam->players[0],
+                    $winningTeam->players[1],
+                    $losingTeam->players[0],
+                    $losingTeam->players[1]
+                );
+
+                // Store ELO changes for each player
+                foreach ($newRatings as $playerId => $newRating) {
+                    $player = Player::find($playerId);
+                    $change = $newRating - $player->elo;
+
+                    EloChange::create([
+                        'game_id' => $game->id,
+                        'player_id' => $playerId,
+                        'change' => $change,
+                    ]);
+
+                    $player->update(['elo' => $newRating]);
+                }
+            }
+        }
 
         return redirect()->back();
     }

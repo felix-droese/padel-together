@@ -29,28 +29,21 @@ const canEditResult = computed(() => {
 </script>
 
 <template>
-    <div class="rounded-lg border p-4">
+    <div class="space-y-4 rounded-lg border bg-card p-4 shadow-sm">
         <div class="flex items-center justify-between">
-            <div class="flex w-full items-start justify-between">
-                <TeamDisplay :team="props.game.first_team" :is-winning-team="props.game.winning_team?.id === props.game.first_team.id" />
-                <TeamDisplay
-                    v-if="props.game.second_team"
-                    :team="props.game.second_team"
-                    :is-winning-team="props.game.winning_team?.id === props.game.second_team.id"
-                />
+            <div class="flex items-center gap-2">
+                <TeamDisplay :team="props.game.first_team" :elo-changes="props.game.elo_changes" />
+                <span class="mx-8 text-muted-foreground">vs</span>
+                <TeamDisplay v-if="props.game.second_team" :team="props.game.second_team" :elo-changes="props.game.elo_changes" />
             </div>
-            <div class="relative">
-                <div class="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" @click="deleteGame">
-                        <Trash2 class="h-5 w-5 text-red-500" />
-                    </Button>
-                    <GameResultForm v-if="canEditResult" :game="props.game" />
-                </div>
+            <div class="flex items-center gap-2">
+                <GameResultForm v-if="canEditResult" :game="props.game" />
+                <Button variant="ghost" size="icon" @click="deleteGame">
+                    <Trash2 class="h-4 w-4" />
+                </Button>
             </div>
         </div>
-        <GameMetadata :date="props.game.date" :location-name="props.locations.find((l) => l.id === props.game.location_id)?.name || ''" />
-        <div v-if="props.game.result" class="mt-6">
-            <GameResultDisplay :game="props.game" />
-        </div>
+        <GameMetadata :game="props.game" :locations="props.locations" />
+        <GameResultDisplay v-if="props.game.result" :game="props.game" />
     </div>
 </template>

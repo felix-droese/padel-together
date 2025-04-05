@@ -1,24 +1,30 @@
 <script setup lang="ts">
 const props = defineProps<{
     team: App.DTOs.TTeam;
-    isWinningTeam: boolean;
+    eloChanges: App.DTOs.TEloChange[];
 }>();
+
+function getEloChange(playerId: number) {
+    return props.eloChanges.find((change) => change.player_id === playerId);
+}
 </script>
 
 <template>
-    <div class="flex-1">
-        <div class="text-xs font-medium text-muted-foreground">Team {{ props.team.id }}</div>
-        <template v-if="props.team.players && props.team.players.length > 0">
-            <div
-                v-for="player in props.team.players"
-                :key="player.id"
-                class="text-xs font-medium sm:text-base"
-                :class="{ 'text-green-600': isWinningTeam }"
+    <div class="space-y-1">
+        <div v-for="player in props.team.players" :key="player.id" class="flex items-center gap-2">
+            <span>{{ player.last_name }}</span>
+            <span v-if="player.elo" class="text-sm text-muted-foreground">({{ player.elo }})</span>
+            <span
+                v-if="getEloChange(player.id)"
+                :class="{
+                    'text-green-600': (getEloChange(player.id)?.change ?? 0) > 0,
+                    'text-red-600': (getEloChange(player.id)?.change ?? 0) < 0,
+                }"
+                class="text-sm font-medium"
             >
-                {{ player.first_name }} {{ player.last_name }}
-                <span class="text-xs text-muted-foreground">({{ player.elo }})</span>
-            </div>
-        </template>
-        <div v-else class="text-xs text-muted-foreground">No players assigned</div>
+                {{ (getEloChange(player.id)?.change ?? 0) > 0 ? '+' : '' }}
+                {{ getEloChange(player.id)?.change }}
+            </span>
+        </div>
     </div>
 </template>

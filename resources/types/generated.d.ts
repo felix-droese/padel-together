@@ -1,4 +1,10 @@
 declare namespace App.DTOs {
+    export type TEloChange = {
+        id: number;
+        game_id: number;
+        player_id: number;
+        change: number;
+    };
     export type TGame = {
         id: number;
         first_team_id: number;
@@ -9,6 +15,7 @@ declare namespace App.DTOs {
         second_team: App.DTOs.TTeam | null;
         result: App.DTOs.TGameResult | null;
         winning_team: App.DTOs.TTeam | null;
+        elo_changes: { [key: number]: App.DTOs.TEloChange } | Array<any>;
     };
     export type TGameResult = {
         id: number;

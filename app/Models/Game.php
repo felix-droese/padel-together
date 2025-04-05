@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Services\EloService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Game extends Model
@@ -35,6 +35,11 @@ class Game extends Model
         return $this->hasOne(GameResult::class);
     }
 
+    public function eloChanges(): HasMany
+    {
+        return $this->hasMany(EloChange::class);
+    }
+
     public function getWinningTeamAttribute(): ?Team
     {
         if (! $this->result) {
@@ -59,28 +64,5 @@ class Game extends Model
         }
 
         return null; // Return null for a tie
-    }
-
-    protected static function booted(): void
-    {
-        static::updated(function (Game $game) {
-            if ($game->isDirty('result') && $game->result && $game->winning_team) {
-                $winningTeam = $game->winning_team;
-                $losingTeam = $winningTeam->id === $game->first_team_id ? $game->secondTeam : $game->firstTeam;
-
-                if ($winningTeam && $losingTeam) {
-                    $newRatings = EloService::calculateNewRatings(
-                        $winningTeam->players[0],
-                        $winningTeam->players[1],
-                        $losingTeam->players[0],
-                        $losingTeam->players[1]
-                    );
-
-                    foreach ($newRatings as $playerId => $newRating) {
-                        Player::where('id', $playerId)->update(['elo' => $newRating]);
-                    }
-                }
-            }
-        });
     }
 }
