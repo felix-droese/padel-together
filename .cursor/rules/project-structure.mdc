@@ -38,8 +38,15 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 - when defining props, use ``` const props = defineProps<{...}> ``` and refer to the props via props.<property-name> in the rest of the file
 - define Array Types with the [] suffix instead of using the Array<string> syntax
 - use ```function name() {}``` over ```const name = () => {...}``` for multiline functions
+- component library: https://headlessui.com/ 
+
+### v-model
+
+- when using models, use defineModel(...) syntax in the child components: https://vuejs.org/guide/components/v-model.html
+
 
 ### Creating forms
 
 - when creating forms, use the inertia form helper: https://inertiajs.com/forms
 - look for components in the ./resources/js/* folder, to use existing components like TextInputs etc.
+

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\LocationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +16,7 @@ Route::get('dashboard', [DashboardController::class, 'index'])
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('locations', [LocationController::class, 'store'])->name('locations.store');
+    Route::post('/games', [GameController::class, 'store'])->name('games.store');
 });
 
 require __DIR__.'/settings.php';
