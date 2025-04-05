@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('locations', [LocationController::class, 'index'])->name('locations.index');
 
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
+    Route::post('/games/{game}/result', [GameController::class, 'storeResult'])->name('games.result');
 });
 
 require __DIR__.'/settings.php';

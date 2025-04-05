@@ -15,5 +15,6 @@ class TGame extends Data
         public int $location_id,
         public TTeam $first_team,
         public ?TTeam $second_team,
+        public ?TGameResult $result,
     ) {}
 }

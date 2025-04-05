@@ -46,8 +46,7 @@ const resultForm = useForm({
 });
 
 function submitResult(gameId: number) {
-    resultForm.game_id = gameId;
-    resultForm.post(route('games.result'), {
+    resultForm.post(route('games.result', { game: gameId }), {
         onSuccess: () => {
             resultForm.reset();
             openResultPopover.value = null;
@@ -183,21 +182,12 @@ function submitResult(gameId: number) {
     <div v-else class="grid gap-4">
         <div v-for="game in props.games" :key="game.id" class="rounded-lg border p-4">
             <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="font-medium">
-                        {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }}
-                        {{ game.first_team.players[1] ? `& ${game.first_team.players[1].first_name} ${game.first_team.players[1].last_name}` : '' }}
-                        vs {{ game.second_team?.players[0]?.first_name }} {{ game.second_team?.players[0]?.last_name }}
-                        {{
-                            game.second_team?.players[1] ? `& ${game.second_team.players[1].first_name} ${game.second_team.players[1].last_name}` : ''
-                        }}
-                    </h3>
-                    <p class="text-sm text-muted-foreground">
-                        {{ new Date(game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
-                        {{ new Date(game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
-                        {{ locations.find((l) => l.id === game.location_id)?.name }}
-                    </p>
-                </div>
+                <h3 class="font-medium">
+                    {{ game.first_team.players[0].first_name }} {{ game.first_team.players[0].last_name }}
+                    {{ game.first_team.players[1] ? `/ ${game.first_team.players[1].first_name} ${game.first_team.players[1].last_name}` : '' }}
+                    vs {{ game.second_team?.players[0]?.first_name }} {{ game.second_team?.players[0]?.last_name }}
+                    {{ game.second_team?.players[1] ? `/ ${game.second_team.players[1].first_name} ${game.second_team.players[1].last_name}` : '' }}
+                </h3>
                 <div class="relative">
                     <Popover>
                         <PopoverButton as="div">
@@ -241,6 +231,24 @@ function submitResult(gameId: number) {
                             </div>
                         </PopoverPanel>
                     </Popover>
+                </div>
+            </div>
+            <p class="mr-4 text-sm text-muted-foreground">
+                {{ new Date(game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
+                {{ new Date(game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
+                {{ locations.find((l) => l.id === game.location_id)?.name }}
+            </p>
+            <div v-if="game.result" class="mt-6">
+                <div class="text-sm font-medium">Result:</div>
+                <div class="grid grid-cols-3 gap-2 text-sm">
+                    <div class="text-muted-foreground">Set</div>
+                    <div class="text-muted-foreground">First Team</div>
+                    <div class="text-muted-foreground">Second Team</div>
+                    <template v-for="(set, index) in game.result.sets" :key="index">
+                        <div>Set {{ index + 1 }}</div>
+                        <div>{{ set.first_team }}</div>
+                        <div>{{ set.second_team }}</div>
+                    </template>
                 </div>
             </div>
         </div>

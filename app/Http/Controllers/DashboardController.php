@@ -14,10 +14,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(fn ($game) => TGame::from($game));
