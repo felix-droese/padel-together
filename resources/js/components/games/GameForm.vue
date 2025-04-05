@@ -31,7 +31,7 @@ function submitGame() {
 </script>
 
 <template>
-    <div class="mt-10 space-y-4">
+    <div class="space-y-4">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-xl font-semibold">Create New Game</h2>

@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="mt-10">
+    <div>
         <GameForm :locations="props.locations" :players="props.players" />
 
         <div class="mt-10">
