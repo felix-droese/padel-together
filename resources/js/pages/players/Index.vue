@@ -43,7 +43,10 @@ function deletePlayer(playerId: number) {
             <div v-else class="grid gap-4">
                 <div v-for="player in props.players" :key="player.id" class="rounded-lg border p-4">
                     <div class="flex items-center justify-between">
-                        <div class="font-medium">{{ player.first_name }} {{ player.last_name }}</div>
+                        <div class="font-medium">
+                            {{ player.first_name }} {{ player.last_name }}
+                            <span v-if="player.user?.email" class="ml-2 text-sm text-muted-foreground"> ({{ player.user.email }}) </span>
+                        </div>
                         <Button variant="ghost" size="icon" @click="deletePlayer(player.id)">
                             <Trash2 class="h-5 w-5 text-red-500" />
                         </Button>

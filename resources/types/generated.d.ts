@@ -22,6 +22,7 @@ export type TPlayer = {
 id: number;
 first_name: string;
 last_name: string;
+user: App.DTOs.TUser | null;
 };
 export type TSet = {
 first_team: number;
@@ -30,5 +31,8 @@ second_team: number;
 export type TTeam = {
 id: number;
 players: Array<App.DTOs.TPlayer>;
+};
+export type TUser = {
+email: string | null;
 };
 }

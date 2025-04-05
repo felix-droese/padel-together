@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\TPlayer;
+use App\DTOs\TUser;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,12 @@ class PlayerController extends Controller
 {
     public function index()
     {
-        $players = Player::all()->map(fn ($player) => TPlayer::from($player));
+        $players = Player::with('user')->get()->map(fn ($player) => TPlayer::from([
+            'id' => $player->id,
+            'first_name' => $player->first_name,
+            'last_name' => $player->last_name,
+            'user' => $player->user ? TUser::from(['email' => $player->user->email]) : null,
+        ]));
 
         return Inertia::render('players/Index', [
             'players' => $players,
