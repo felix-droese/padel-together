@@ -36,6 +36,8 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 ### General Design Decisions
 - we use composition API: https://vuejs.org/guide/extras/composition-api-faq.html
 - when defining props, use ``` const props = defineProps<{...}> ``` and refer to the props via props.<property-name> in the rest of the file
+- define Array Types with the [] suffix instead of using the Array<string> syntax
+- use ```function name() {}``` over ```const name = () => {...}``` for multiline functions
 
 ### Creating forms
 
