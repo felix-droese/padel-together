@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './index';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { X, Search } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface Option {
     value: string | number;
@@ -15,29 +15,45 @@ const props = defineProps<{
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
-    class?: string;
 }>();
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | number | undefined];
 }>();
 
+const searchTerm = ref('');
+const isOpen = ref(false);
+
 const selectedOption = computed(() => {
     return props.options.find(option => option.value === props.modelValue);
 });
 
+const filteredOptions = computed(() => {
+    if (!searchTerm.value) return props.options;
+    const term = searchTerm.value.toLowerCase();
+    return props.options.filter(option =>
+        option.label.toLowerCase().includes(term)
+    );
+});
+
 function clearSelection() {
     emit('update:modelValue', undefined);
+}
+
+function handleSearchInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    searchTerm.value = input.value;
 }
 </script>
 
 <template>
     <div class="flex gap-2">
         <Select
+            v-bind="$attrs"
             :model-value="modelValue"
             @update:model-value="emit('update:modelValue', $event)"
             :disabled="disabled"
-            :class="class"
+            @open-change="isOpen = $event"
         >
             <SelectTrigger>
                 <SelectValue>
@@ -45,13 +61,25 @@ function clearSelection() {
                 </SelectValue>
             </SelectTrigger>
             <SelectContent>
-                <SelectItem
-                    v-for="option in options"
-                    :key="option.value"
-                    :value="option.value"
-                >
-                    {{ option.label }}
-                </SelectItem>
+                <div class="relative px-2 py-1">
+                    <Search class="absolute left-4 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <input
+                        type="text"
+                        :value="searchTerm"
+                        @input="handleSearchInput"
+                        placeholder="Search..."
+                        class="w-full rounded-md border border-input bg-background px-8 py-1 text-sm outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
+                    />
+                </div>
+                <div class="max-h-[200px] overflow-y-auto">
+                    <SelectItem
+                        v-for="option in filteredOptions"
+                        :key="option.value"
+                        :value="option.value"
+                    >
+                        {{ option.label }}
+                    </SelectItem>
+                </div>
             </SelectContent>
         </Select>
         <Button

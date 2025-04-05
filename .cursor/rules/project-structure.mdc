@@ -42,6 +42,7 @@ In Controllers, when we return our "views", we return Inertia-Pages with Inertia
 - component library: https://headlessui.com/ 
 - use ziggy route(...) helper for endpoints
 - use lucide vue icons: https://lucide.dev/icons/
+- types and interfaces should be prefixed with T
 
 ### v-model
 
