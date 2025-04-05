@@ -25,6 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 const form = useForm({
     first_name: '',
     last_name: '',
+    email: '',
 });
 
 function submit() {
@@ -54,6 +55,12 @@ function submit() {
                     <Label for="last_name">Last Name</Label>
                     <Input id="last_name" v-model="form.last_name" type="text" placeholder="Enter last name" :disabled="form.processing" />
                     <InputError :message="form.errors.last_name" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label for="email">Email <span class="text-gray-500">(optional)</span></Label>
+                    <Input id="email" v-model="form.email" type="email" placeholder="Enter email (optional)" :disabled="form.processing" />
+                    <InputError :message="form.errors.email" />
                 </div>
 
                 <Button type="submit" :disabled="form.processing">

@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\DTOs\TPlayer;
 use App\DTOs\TUser;
 use App\Models\Player;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class PlayerController extends Controller
@@ -35,12 +36,19 @@ class PlayerController extends Controller
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email'],
+        ]);
+
+        $user = User::create([
+            'name' => $validated['first_name'].' '.$validated['last_name'],
+            'email' => $validated['email'] ?? '',
+            'password' => bcrypt(Str::random(32)),
         ]);
 
         $player = Player::create([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
         ]);
 
         return redirect()->route('players.index');
