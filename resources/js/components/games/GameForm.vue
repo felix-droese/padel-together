@@ -46,13 +46,15 @@ function submitGame() {
         <form v-if="isGameFormVisible" @submit.prevent="submitGame" class="space-y-4">
             <div class="space-y-2">
                 <Label for="date">Game Date</Label>
-                <VueDatePicker v-model="gameForm.date" />
+                <div class="w-[300px]">
+                    <VueDatePicker v-model="gameForm.date" />
+                </div>
                 <InputError :message="gameForm.errors.date" />
             </div>
 
             <div class="space-y-2">
                 <Label for="location">Location</Label>
-                <Select v-model="gameForm.location_id" :disabled="gameForm.processing">
+                <Select v-model="gameForm.location_id" :disabled="gameForm.processing" class="w-[300px]">
                     <SelectTrigger>
                         <SelectValue>
                             {{ props.locations.find((l) => l.id === gameForm.location_id)?.name || 'Select a location' }}
@@ -71,7 +73,7 @@ function submitGame() {
                 <Label>First Team Players</Label>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex gap-2">
-                        <Select v-model="gameForm.first_team_players[0]" :disabled="gameForm.processing">
+                        <Select v-model="gameForm.first_team_players[0]" :disabled="gameForm.processing" class="w-[300px]">
                             <SelectTrigger>
                                 <SelectValue>
                                     {{
@@ -99,7 +101,7 @@ function submitGame() {
                         </Button>
                     </div>
                     <div class="flex gap-2">
-                        <Select v-model="gameForm.first_team_players[1]" :disabled="gameForm.processing">
+                        <Select v-model="gameForm.first_team_players[1]" :disabled="gameForm.processing" class="w-[300px]">
                             <SelectTrigger>
                                 <SelectValue>
                                     {{
@@ -134,7 +136,7 @@ function submitGame() {
                 <Label>Second Team Players</Label>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex gap-2">
-                        <Select v-model="gameForm.second_team_players[0]" :disabled="gameForm.processing">
+                        <Select v-model="gameForm.second_team_players[0]" :disabled="gameForm.processing" class="w-[300px]">
                             <SelectTrigger>
                                 <SelectValue>
                                     {{
@@ -162,7 +164,7 @@ function submitGame() {
                         </Button>
                     </div>
                     <div class="flex gap-2">
-                        <Select v-model="gameForm.second_team_players[1]" :disabled="gameForm.processing">
+                        <Select v-model="gameForm.second_team_players[1]" :disabled="gameForm.processing" class="w-[300px]">
                             <SelectTrigger>
                                 <SelectValue>
                                     {{
