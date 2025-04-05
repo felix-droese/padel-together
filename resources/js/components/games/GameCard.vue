@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
 import { watch } from 'vue';
 
 const props = defineProps<{
@@ -18,6 +19,8 @@ const resultForm = useForm({
     ],
 });
 
+const deleteForm = useForm({});
+
 function submitResult(gameId: number) {
     const routeName = props.game.result ? 'games.result.update' : 'games.result';
     const method = props.game.result ? 'put' : 'post';
@@ -27,6 +30,12 @@ function submitResult(gameId: number) {
             resultForm.reset();
         },
     });
+}
+
+function deleteGame() {
+    if (confirm('Are you sure you want to delete this game?')) {
+        deleteForm.delete(route('games.destroy', { game: props.game.id }));
+    }
 }
 
 // Initialize form with existing result if present
@@ -75,52 +84,57 @@ watch(
                 }}
             </h3>
             <div class="relative">
-                <Popover v-slot="{ close }">
-                    <PopoverButton as="div">
-                        <Button variant="outline">
-                            {{ props.game.result ? 'Edit Result' : 'Add Result' }}
-                        </Button>
-                    </PopoverButton>
-                    <PopoverPanel
-                        class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                    >
-                        <div class="space-y-4 p-4">
-                            <div class="space-y-2">
-                                <h4 class="font-medium">{{ props.game.result ? 'Edit Result' : 'Enter Result' }}</h4>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <div class="text-sm text-muted-foreground">Set</div>
-                                    <div class="text-sm text-muted-foreground">First Team</div>
-                                    <div class="text-sm text-muted-foreground">Second Team</div>
+                <div class="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" @click="deleteGame">
+                        <Trash2 class="h-5 w-5 text-red-500" />
+                    </Button>
+                    <Popover v-slot="{ close }">
+                        <PopoverButton as="div">
+                            <Button variant="outline">
+                                {{ props.game.result ? 'Edit Result' : 'Add Result' }}
+                            </Button>
+                        </PopoverButton>
+                        <PopoverPanel
+                            class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        >
+                            <div class="space-y-4 p-4">
+                                <div class="space-y-2">
+                                    <h4 class="font-medium">{{ props.game.result ? 'Edit Result' : 'Enter Result' }}</h4>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="text-sm text-muted-foreground">Set</div>
+                                        <div class="text-sm text-muted-foreground">First Team</div>
+                                        <div class="text-sm text-muted-foreground">Second Team</div>
+                                    </div>
+                                    <div v-for="(set, index) in resultForm.sets" :key="index" class="grid grid-cols-3 gap-2">
+                                        <div class="text-sm">Set {{ index + 1 }}</div>
+                                        <input
+                                            v-model="set.first_team"
+                                            type="number"
+                                            min="0"
+                                            max="7"
+                                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            placeholder="0"
+                                        />
+                                        <input
+                                            v-model="set.second_team"
+                                            type="number"
+                                            min="0"
+                                            max="7"
+                                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            placeholder="0"
+                                        />
+                                    </div>
                                 </div>
-                                <div v-for="(set, index) in resultForm.sets" :key="index" class="grid grid-cols-3 gap-2">
-                                    <div class="text-sm">Set {{ index + 1 }}</div>
-                                    <input
-                                        v-model="set.first_team"
-                                        type="number"
-                                        min="0"
-                                        max="7"
-                                        class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
-                                        placeholder="0"
-                                    />
-                                    <input
-                                        v-model="set.second_team"
-                                        type="number"
-                                        min="0"
-                                        max="7"
-                                        class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
-                                        placeholder="0"
-                                    />
+                                <div class="flex gap-2">
+                                    <Button @click="close" variant="outline" class="flex-1">Cancel</Button>
+                                    <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="flex-1">
+                                        {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
+                                    </Button>
                                 </div>
                             </div>
-                            <div class="flex gap-2">
-                                <Button @click="close" variant="outline" class="flex-1">Cancel</Button>
-                                <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="flex-1">
-                                    {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
-                                </Button>
-                            </div>
-                        </div>
-                    </PopoverPanel>
-                </Popover>
+                        </PopoverPanel>
+                    </Popover>
+                </div>
             </div>
         </div>
         <p class="mr-4 text-sm text-muted-foreground">

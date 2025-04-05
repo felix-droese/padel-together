@@ -102,4 +102,11 @@ class GameController extends Controller
 
         return redirect()->back();
     }
+
+    public function destroy(Game $game)
+    {
+        $game->delete();
+
+        return redirect()->back();
+    }
 }
