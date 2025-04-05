@@ -8,6 +8,10 @@ use App\DTOs\TPlayer;
 use App\Models\Game;
 use App\Models\Location;
 use App\Models\Player;
+use App\Models\Team;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class GameController extends Controller
