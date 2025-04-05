@@ -2,7 +2,7 @@
 import { Listbox } from '@headlessui/vue';
 import { cn } from '@/lib/utils';
 
-const model = defineModel<string>();
+const model = defineModel<string | number | null>();
 const props = defineProps<{
   disabled?: boolean;
   class?: string;

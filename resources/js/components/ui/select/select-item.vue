@@ -3,7 +3,7 @@ import { ListboxOption } from '@headlessui/vue';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
-  value: string;
+  value: string | number;
   class?: string;
 }>();
 </script>

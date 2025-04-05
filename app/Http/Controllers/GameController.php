@@ -38,9 +38,9 @@ class GameController extends Controller
             'date' => ['required', 'date'],
             'location_id' => ['required', Rule::exists('locations', 'id')],
             'first_team_players' => ['sometimes', 'array', 'min:1', 'max:2'],
-            'first_team_players.*' => ['required', Rule::exists('players', 'id')],
+            'first_team_players.*' => ['nullable', Rule::exists('players', 'id')],
             'second_team_players' => ['sometimes', 'array', 'min:1', 'max:2'],
-            'second_team_players.*' => ['required', Rule::exists('players', 'id')],
+            'second_team_players.*' => ['nullable', Rule::exists('players', 'id')],
         ]);
 
         // Get the authenticated user's player
@@ -48,17 +48,20 @@ class GameController extends Controller
 
         // Create first team
         $firstTeam = Team::create();
-        if (isset($validated['first_team_players'])) {
-            $firstTeam->players()->attach($validated['first_team_players']);
-        } else {
-            $firstTeam->players()->attach($userPlayer->id);
+        $firstTeamPlayers = array_filter($validated['first_team_players'] ?? [], fn ($id) => $id !== null);
+        if (empty($firstTeamPlayers)) {
+            $firstTeamPlayers = [$userPlayer->id];
         }
+        $firstTeam->players()->attach($firstTeamPlayers);
 
         // Create second team if players are provided
         $secondTeam = null;
         if (isset($validated['second_team_players'])) {
             $secondTeam = Team::create();
-            $secondTeam->players()->attach($validated['second_team_players']);
+            $secondTeamPlayers = array_filter($validated['second_team_players'], fn ($id) => $id !== null);
+            if (! empty($secondTeamPlayers)) {
+                $secondTeam->players()->attach($secondTeamPlayers);
+            }
         }
 
         // Create the game

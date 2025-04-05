@@ -10,7 +10,7 @@ interface Option {
 }
 
 const props = defineProps<{
-    modelValue: string | number | undefined;
+    modelValue: string | number | undefined | null;
     options: Option[];
     placeholder?: string;
     disabled?: boolean;
@@ -18,7 +18,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | number | undefined];
+    'update:modelValue': [value: string | number | undefined | null];
 }>();
 
 const searchTerm = ref('');

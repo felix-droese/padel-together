@@ -23,7 +23,7 @@ const gameForm = useForm({
     date: '',
     location_id: 0,
     first_team_players: [authenticatedPlayer?.id, undefined] as (number | undefined)[],
-    second_team_players: [] as (number | undefined)[],
+    second_team_players: [undefined, undefined] as (number | undefined)[],
 });
 
 function submitGame() {
@@ -112,6 +112,7 @@ const authenticatedPlayerOption = computed(() => {
                                 placeholder="Select first player"
                                 :disabled="true"
                                 class="w-[300px]"
+                                :value-type="'number'"
                             />
                             <EnhancedSelect
                                 v-model="gameForm.first_team_players[1]"
@@ -120,6 +121,7 @@ const authenticatedPlayerOption = computed(() => {
                                 :disabled="gameForm.processing"
                                 clearable
                                 class="w-[300px]"
+                                :value-type="'number'"
                             />
                         </div>
                         <InputError :message="gameForm.errors.first_team_players" />
@@ -134,6 +136,7 @@ const authenticatedPlayerOption = computed(() => {
                                 :disabled="gameForm.processing"
                                 clearable
                                 class="w-[300px]"
+                                :value-type="'number'"
                             />
                             <EnhancedSelect
                                 v-model="gameForm.second_team_players[1]"
@@ -142,6 +145,7 @@ const authenticatedPlayerOption = computed(() => {
                                 :disabled="gameForm.processing"
                                 clearable
                                 class="w-[300px]"
+                                :value-type="'number'"
                             />
                         </div>
                         <InputError :message="gameForm.errors.second_team_players" />
