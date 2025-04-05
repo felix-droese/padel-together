@@ -1,0 +1,118 @@
+<script setup lang="ts">
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const props = defineProps<{
+    game: App.DTOs.TGame;
+    locations: App.DTOs.TLocation[];
+}>();
+
+const openResultPopover = ref<number | null>(null);
+
+function toggleResultPopover(gameId: number) {
+    openResultPopover.value = openResultPopover.value === gameId ? null : gameId;
+}
+
+const resultForm = useForm({
+    game_id: 0,
+    sets: [
+        { first_team: '', second_team: '' },
+        { first_team: '', second_team: '' },
+        { first_team: '', second_team: '' },
+    ],
+});
+
+function submitResult(gameId: number) {
+    resultForm.post(route('games.result', { game: gameId }), {
+        onSuccess: () => {
+            resultForm.reset();
+            openResultPopover.value = null;
+        },
+    });
+}
+</script>
+
+<template>
+    <div class="rounded-lg border p-4">
+        <div class="flex items-center justify-between">
+            <h3 class="font-medium">
+                {{ props.game.first_team.players[0].first_name }} {{ props.game.first_team.players[0].last_name }}
+                {{
+                    props.game.first_team.players[1]
+                        ? `/ ${props.game.first_team.players[1].first_name} ${props.game.first_team.players[1].last_name}`
+                        : ''
+                }}
+                vs {{ props.game.second_team?.players[0]?.first_name }} {{ props.game.second_team?.players[0]?.last_name }}
+                {{
+                    props.game.second_team?.players[1]
+                        ? `/ ${props.game.second_team.players[1].first_name} ${props.game.second_team.players[1].last_name}`
+                        : ''
+                }}
+            </h3>
+            <div class="relative">
+                <Popover>
+                    <PopoverButton as="div">
+                        <Button variant="outline" @click="toggleResultPopover(props.game.id)"> Add Result </Button>
+                    </PopoverButton>
+                    <PopoverPanel
+                        v-if="openResultPopover === props.game.id"
+                        class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    >
+                        <div class="space-y-4 p-4">
+                            <div class="space-y-2">
+                                <h4 class="font-medium">Enter Result</h4>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="text-sm text-muted-foreground">Set</div>
+                                    <div class="text-sm text-muted-foreground">First Team</div>
+                                    <div class="text-sm text-muted-foreground">Second Team</div>
+                                </div>
+                                <div v-for="(set, index) in resultForm.sets" :key="index" class="grid grid-cols-3 gap-2">
+                                    <div class="text-sm">Set {{ index + 1 }}</div>
+                                    <input
+                                        v-model="set.first_team"
+                                        type="number"
+                                        min="0"
+                                        max="7"
+                                        class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                        placeholder="0"
+                                    />
+                                    <input
+                                        v-model="set.second_team"
+                                        type="number"
+                                        min="0"
+                                        max="7"
+                                        class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                        placeholder="0"
+                                    />
+                                </div>
+                            </div>
+                            <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="w-full">
+                                {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
+                            </Button>
+                        </div>
+                    </PopoverPanel>
+                </Popover>
+            </div>
+        </div>
+        <p class="mr-4 text-sm text-muted-foreground">
+            {{ new Date(props.game.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}
+            {{ new Date(props.game.date).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) }} at
+            {{ props.locations.find((l) => l.id === props.game.location_id)?.name }}
+        </p>
+        <div v-if="props.game.result" class="mt-6">
+            <div class="text-sm font-medium">Result:</div>
+            <div class="grid grid-cols-3 gap-2 text-sm">
+                <div class="text-muted-foreground">Set</div>
+                <div class="text-muted-foreground">First Team</div>
+                <div class="text-muted-foreground">Second Team</div>
+                <template v-for="(set, index) in props.game.result.sets" :key="index">
+                    <div>Set {{ index + 1 }}</div>
+                    <div>{{ set.first_team }}</div>
+                    <div>{{ set.second_team }}</div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
