@@ -3,16 +3,16 @@ import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { SharedData, User, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { LayoutGrid, MapPin, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const page = usePage();
 const isAdmin = computed(() => {
-    const roles = page.props.auth.user?.roles || [];
-    return roles.includes('admin');
+    const page = usePage<SharedData>();
+    const user = page.props.auth.user as User;
+    return user && user.roles.includes('admin');
 });
 
 const mainNavItems = computed(() => {
@@ -57,7 +57,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('games')">
+                        <Link :href="route('games.index')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

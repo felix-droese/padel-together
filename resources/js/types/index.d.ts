@@ -32,6 +32,7 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    roles: string[];
     player?: {
         id: number;
         first_name: string;
@@ -56,6 +57,3 @@ export interface PageProps {
     };
 }
 
-declare module '@inertiajs/vue3' {
-    interface PageProps extends PageProps {}
-}

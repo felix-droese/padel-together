@@ -11,12 +11,11 @@ Route::get('/', function () {
         return redirect()->route('login');
     }
 
-    return redirect()->route('games');
+    return redirect()->route('games.index');
 })->name('home');
 
 Route::get('games', [GameController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('games');
+    ->name('games.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('locations/create', [LocationController::class, 'create'])->name('locations.create');
