@@ -77,7 +77,9 @@ async function createPayment() {
                     <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
                     <PaymentStatusBadge :status="userPayment.status" />
                 </div>
-                <p v-if="payer" class="mt-1 text-sm text-muted-foreground">Pay to: {{ payer.email }}</p>
+                <p v-if="payer" class="mt-1.5 text-sm text-muted-foreground">
+                    {{ userPayment.status === 'completed' ? 'Paid to:' : 'Pay to:' }} {{ payer.email }}
+                </p>
                 <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
                     {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
                 </Button>
