@@ -3,7 +3,7 @@ import GameCard from '@/components/games/GameCard.vue';
 import GameForm from '@/components/games/GameForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { SharedData, User, type BreadcrumbItem } from '@/types';
-import { router, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
@@ -32,7 +32,20 @@ function toggleLocation(locationId: number) {
 async function createPayment() {
     try {
         isProcessingPayment.value = true;
-        await router.post(route('payments.create'), { amount: '20.00' });
+        const response = await fetch(route('payments.create'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1] || '',
+            },
+            body: JSON.stringify({ amount: '20.00' }),
+        });
+
+        const data = await response.json();
+
+        if (data.paypalUrl) {
+            window.location.href = data.paypalUrl;
+        }
     } catch (error) {
         console.error('Payment creation failed:', error);
     } finally {
