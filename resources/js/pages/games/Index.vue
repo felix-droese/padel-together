@@ -32,7 +32,7 @@ function toggleLocation(locationId: number) {
 async function createPayment() {
     try {
         isProcessingPayment.value = true;
-        await router.post(route('payment.create'), { amount: '20.00' });
+        await router.post(route('payments.create'), { amount: '20.00' });
     } catch (error) {
         console.error('Payment creation failed:', error);
     } finally {

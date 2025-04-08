@@ -33,12 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/games/{game}/result', [GameController::class, 'updateResult'])->name('games.result.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
 
-    Route::post('/payment/create', [PaymentController::class, 'create'])
-        ->name('payment.create')
+    Route::post('/payments/create', [PaymentController::class, 'create'])
+        ->name('payments.create')
         ->middleware('auth');
 
-    Route::post('/payment/capture', [PaymentController::class, 'capture'])
-        ->name('payment.capture')
+    Route::post('/payments/capture', [PaymentController::class, 'capture'])
+        ->name('payments.capture')
         ->middleware('auth');
 });
 
