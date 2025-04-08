@@ -51,6 +51,7 @@ class GameController extends Controller
             'first_team_players.*' => ['nullable', Rule::exists('players', 'id')],
             'second_team_players' => ['sometimes', 'array', 'min:1', 'max:2'],
             'second_team_players.*' => ['nullable', Rule::exists('players', 'id')],
+            'price_in_cent' => ['required', 'integer', 'min:0'],
         ]);
 
         // Get the authenticated user's player
@@ -80,6 +81,7 @@ class GameController extends Controller
             'second_team_id' => $secondTeam?->id,
             'date' => $validated['date'],
             'location_id' => $validated['location_id'],
+            'price_in_cent' => $validated['price_in_cent'],
         ]);
 
         return redirect()->back();

@@ -24,6 +24,7 @@ const gameForm = useForm({
     location_id: 0,
     first_team_players: [authenticatedPlayer?.id, undefined] as (number | undefined)[],
     second_team_players: [undefined, undefined] as (number | undefined)[],
+    price_in_cent: 0,
 });
 
 function submitGame() {
@@ -113,6 +114,18 @@ const authenticatedPlayerOption = computed(() => {
                         class="w-[300px]"
                     />
                     <InputError :message="gameForm.errors.location_id" />
+                </div>
+                <div>
+                    <Label for="price_in_cent">Price (in cents)</Label>
+                    <input
+                        id="price_in_cent"
+                        v-model="gameForm.price_in_cent"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-[300px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    />
+                    <InputError :message="gameForm.errors.price_in_cent" />
                 </div>
             </div>
 
