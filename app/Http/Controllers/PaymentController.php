@@ -75,14 +75,14 @@ class PaymentController extends Controller
             // 2. Associate the payment with the game
             // 3. Send confirmation emails, etc.
 
-            return redirect()->route('games.index')->with('success', 'Payment completed successfully!');
+            return redirect()->route('games.index');
         } catch (\Exception $e) {
-            return redirect()->route('games.index')->with('error', 'Payment failed: '.$e->getMessage());
+            return redirect()->route('games.index');
         }
     }
 
     public function cancel()
     {
-        return redirect()->route('games.index')->with('info', 'Payment was cancelled.');
+        return redirect()->route('games.index');
     }
 }

@@ -12,6 +12,7 @@ const props = defineProps<{
     players: App.DTOs.TPlayer[];
 }>();
 
+const page = usePage<SharedData>();
 const selectedLocationIds = ref<number[]>([]);
 const isProcessingPayment = ref(false);
 
@@ -53,7 +54,6 @@ async function createPayment() {
     }
 }
 
-const page = usePage<SharedData>();
 const user = page.props.auth.user as User;
 
 const breadcrumbs: BreadcrumbItem[] = [
