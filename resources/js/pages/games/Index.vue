@@ -2,8 +2,8 @@
 import GameCard from '@/components/games/GameCard.vue';
 import GameForm from '@/components/games/GameForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { SharedData, type BreadcrumbItem } from '@/types';
-import { usePage, router } from '@inertiajs/vue3';
+import { SharedData, User, type BreadcrumbItem } from '@/types';
+import { router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{

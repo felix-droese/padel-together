@@ -8,7 +8,7 @@ use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaymentController extends Controller
 {
-    public function createPayment(Request $request)
+    public function create(Request $request)
     {
         try {
             $provider = new PayPalClient;
@@ -39,7 +39,7 @@ class PaymentController extends Controller
         }
     }
 
-    public function capturePayment(Request $request)
+    public function capture(Request $request)
     {
         try {
             $provider = new PayPalClient;
