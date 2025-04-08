@@ -105,7 +105,7 @@ async function createPayment() {
         <GameResultDisplay v-if="props.game.result" :game="props.game" />
 
         <!-- Payment Section -->
-        <div v-if="userPayment" class="mt-4 rounded-lg border p-4">
+        <div v-if="!isPayer && userPayment" class="mt-4 rounded-lg border p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="font-medium">Your Payment</h3>
