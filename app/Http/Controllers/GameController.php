@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\DTOs\TEloChange;
 use App\DTOs\TGame;
+use App\DTOs\TGamePayment;
 use App\DTOs\TLocation;
 use App\DTOs\TPlayer;
 use App\DTOs\TTeam;
 use App\Models\EloChange;
 use App\Models\Game;
+use App\Models\GamePayment;
 use App\Models\Location;
 use App\Models\Player;
 use App\Models\Team;
@@ -24,13 +26,14 @@ class GameController extends Controller
     {
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.player'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($game) {
                 $tGame = TGame::from($game);
                 $tGame->winning_team = $game->winning_team ? TTeam::from($game->winning_team) : null;
                 $tGame->elo_changes = $game->eloChanges->map(fn ($change) => TEloChange::from($change));
+                $tGame->payments = $game->payments->map(fn ($payment) => TGamePayment::from($payment));
 
                 return $tGame;
             });
@@ -76,13 +79,26 @@ class GameController extends Controller
         }
 
         // Create the game
-        Game::create([
+        $game = Game::create([
             'first_team_id' => $firstTeam->id,
             'second_team_id' => $secondTeam?->id,
             'date' => $validated['date'],
             'location_id' => $validated['location_id'],
             'price_in_cent' => $validated['price_in_cent'],
         ]);
+
+        // Create payment records for each player
+        $playerAmount = ceil($validated['price_in_cent'] / 4); // Divide by 4 and round up
+        $allPlayers = array_merge($firstTeamPlayers, $secondTeamPlayers ?? []);
+
+        foreach ($allPlayers as $playerId) {
+            GamePayment::create([
+                'game_id' => $game->id,
+                'player_id' => $playerId,
+                'amount_in_cent' => $playerAmount,
+                'status' => 'pending',
+            ]);
+        }
 
         return redirect()->back();
     }

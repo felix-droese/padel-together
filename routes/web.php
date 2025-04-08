@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GamePaymentController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayerController;
@@ -33,17 +34,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/games/{game}/result', [GameController::class, 'updateResult'])->name('games.result.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
 
+    // Game payment routes
+    Route::post('/games/{game}/payments/create', [GamePaymentController::class, 'create'])
+        ->name('game-payments.create');
+    Route::get('/games/{game}/payments/success', [GamePaymentController::class, 'success'])
+        ->name('game-payments.success');
+    Route::get('/games/{game}/payments/cancel', [GamePaymentController::class, 'cancel'])
+        ->name('game-payments.cancel');
+
     Route::post('/payments/create', [PaymentController::class, 'create'])
         ->name('payments.create');
-
     Route::get('/payments/success', [PaymentController::class, 'success'])
         ->name('payments.success');
-
     Route::get('/payments/cancel', [PaymentController::class, 'cancel'])
         ->name('payments.cancel');
-
-    Route::post('/payments/capture', [PaymentController::class, 'capture'])
-        ->name('payments.capture');
 });
 
 require __DIR__.'/settings.php';
