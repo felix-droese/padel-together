@@ -3,8 +3,9 @@ import { Button } from '@/components/ui/button';
 import type { SharedData } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Trash2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import GameMetadata from './card/GameMetadata.vue';
+import GamePaymentSection from './card/GamePaymentSection.vue';
 import GameResultDisplay from './card/GameResultDisplay.vue';
 import GameResultForm from './card/GameResultForm.vue';
 import TeamDisplay from './card/TeamDisplay.vue';
@@ -18,11 +19,6 @@ const page = usePage<SharedData>();
 const auth = computed(() => page.props.auth);
 
 const deleteForm = useForm({});
-const isProcessingPayment = ref(false);
-
-function formatPrice(amountInCent: number): string {
-    return `€${(amountInCent / 100).toFixed(2)}`;
-}
 
 function deleteGame() {
     if (confirm('Are you sure you want to delete this game?')) {
@@ -45,45 +41,6 @@ const isPlayerInGame = computed(() => {
 
     return firstTeamPlayers.includes(userId) || secondTeamPlayers.includes(userId);
 });
-
-const userPayment = computed(() => {
-    return props.game.payments.find((payment) => payment.player.user?.id === auth.value.user?.id);
-});
-
-const isPayer = computed(() => {
-    return props.game.payments.some((payment) => payment.payer?.id === auth.value.user?.id);
-});
-
-const otherPayments = computed(() => {
-    return props.game.payments.filter((payment) => payment.player.user?.id !== auth.value.user?.id);
-});
-
-const payer = computed(() => {
-    return props.game.payments.find((payment) => payment.payer)?.payer;
-});
-
-async function createPayment() {
-    try {
-        isProcessingPayment.value = true;
-        const response = await fetch(route('game-payments.create', { game: props.game.id }), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-XSRF-TOKEN': document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1] || '',
-            },
-        });
-
-        const data = await response.json();
-
-        if (data.paypalUrl) {
-            window.location.href = data.paypalUrl;
-        }
-    } catch (error) {
-        console.error('Payment creation failed:', error);
-    } finally {
-        isProcessingPayment.value = false;
-    }
-}
 </script>
 
 <template>
@@ -103,53 +60,6 @@ async function createPayment() {
         </div>
         <GameMetadata :game="props.game" :locations="props.locations" />
         <GameResultDisplay v-if="props.game.result" :game="props.game" />
-
-        <!-- Payment Section -->
-        <div v-if="!isPayer && userPayment" class="mt-4 rounded-lg border p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="font-medium">Your Payment</h3>
-                    <p class="text-sm text-muted-foreground">Amount: €{{ (userPayment.amount_in_cent / 100).toFixed(2) }}</p>
-                    <p v-if="payer" class="text-sm text-muted-foreground">Pay to: {{ payer.email }}</p>
-                </div>
-                <div>
-                    <span
-                        :class="{
-                            'rounded-full px-2 py-1 text-xs font-medium': true,
-                            'bg-green-100 text-green-800': userPayment.status === 'completed',
-                            'bg-yellow-100 text-yellow-800': userPayment.status === 'pending',
-                            'bg-red-100 text-red-800': userPayment.status === 'failed',
-                        }"
-                    >
-                        {{ userPayment.status }}
-                    </span>
-                </div>
-            </div>
-            <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
-                {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
-            </Button>
-        </div>
-
-        <div v-if="isPayer" class="mt-4">
-            <h4 class="mb-2 font-medium">Other Players' Payments:</h4>
-            <div v-for="payment in otherPayments" :key="payment.id" class="mb-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm"> {{ payment.player.first_name }} {{ payment.player.last_name }} </span>
-                    <span class="text-sm">{{ formatPrice(payment.amount_in_cent) }}</span>
-                </div>
-                <div class="mt-1 flex items-center justify-between">
-                    <span class="text-xs text-gray-600">Status:</span>
-                    <span
-                        :class="{
-                            'text-green-600': payment.status === 'completed',
-                            'text-yellow-600': payment.status === 'pending',
-                            'text-red-600': payment.status === 'failed',
-                        }"
-                    >
-                        {{ payment.status }}
-                    </span>
-                </div>
-            </div>
-        </div>
+        <GamePaymentSection :game="props.game" />
     </div>
 </template>

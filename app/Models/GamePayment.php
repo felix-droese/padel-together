@@ -26,6 +26,4 @@ class GamePayment extends Model
     {
         return $this->belongsTo(User::class, 'payer_id');
     }
-
-    isNotPayer
 }
