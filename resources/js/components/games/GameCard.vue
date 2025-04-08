@@ -20,6 +20,10 @@ const auth = computed(() => page.props.auth);
 const deleteForm = useForm({});
 const isProcessingPayment = ref(false);
 
+function formatPrice(amountInCent: number): string {
+    return `€${(amountInCent / 100).toFixed(2)}`;
+}
+
 function deleteGame() {
     if (confirm('Are you sure you want to delete this game?')) {
         deleteForm.delete(route('games.destroy', { game: props.game.id }));
@@ -43,8 +47,15 @@ const isPlayerInGame = computed(() => {
 });
 
 const userPayment = computed(() => {
-    if (!auth.value.user) return null;
-    return props.game.payments.find((payment) => payment.player.user?.id === auth.value.user.id);
+    return props.game.payments.find((payment) => payment.player.user?.id === auth.value.user?.id);
+});
+
+const isPayer = computed(() => {
+    return props.game.payments.some((payment) => payment.payer?.id === auth.value.user?.id);
+});
+
+const otherPayments = computed(() => {
+    return props.game.payments.filter((payment) => payment.player.user?.id !== auth.value.user?.id);
 });
 
 const payer = computed(() => {
@@ -117,6 +128,28 @@ async function createPayment() {
             <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
                 {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
             </Button>
+        </div>
+
+        <div v-if="isPayer" class="mt-4">
+            <h4 class="mb-2 font-medium">Other Players' Payments:</h4>
+            <div v-for="payment in otherPayments" :key="payment.id" class="mb-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm"> {{ payment.player.first_name }} {{ payment.player.last_name }} </span>
+                    <span class="text-sm">{{ formatPrice(payment.amount_in_cent) }}</span>
+                </div>
+                <div class="mt-1 flex items-center justify-between">
+                    <span class="text-xs text-gray-600">Status:</span>
+                    <span
+                        :class="{
+                            'text-green-600': payment.status === 'completed',
+                            'text-yellow-600': payment.status === 'pending',
+                            'text-red-600': payment.status === 'failed',
+                        }"
+                    >
+                        {{ payment.status }}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
