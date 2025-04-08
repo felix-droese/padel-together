@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/games/{game}/result', [GameController::class, 'storeResult'])->name('games.result');
     Route::put('/games/{game}/result', [GameController::class, 'updateResult'])->name('games.result.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
+
+    Route::post('/payments/create', [PaymentController::class, 'create'])
+        ->name('payments.create');
+
+    Route::get('/payments/success', [PaymentController::class, 'success'])
+        ->name('payments.success');
+
+    Route::get('/payments/cancel', [PaymentController::class, 'cancel'])
+        ->name('payments.cancel');
+
+    Route::post('/payments/capture', [PaymentController::class, 'capture'])
+        ->name('payments.capture');
 });
 
 require __DIR__.'/settings.php';

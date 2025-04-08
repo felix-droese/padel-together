@@ -2,7 +2,7 @@
 import GameCard from '@/components/games/GameCard.vue';
 import GameForm from '@/components/games/GameForm.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { SharedData, type BreadcrumbItem } from '@/types';
+import { SharedData, User, type BreadcrumbItem } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -12,7 +12,9 @@ const props = defineProps<{
     players: App.DTOs.TPlayer[];
 }>();
 
+const page = usePage<SharedData>();
 const selectedLocationIds = ref<number[]>([]);
+const isProcessingPayment = ref(false);
 
 const filteredGames = computed(() => {
     if (selectedLocationIds.value.length === 0) return props.games;
@@ -28,7 +30,30 @@ function toggleLocation(locationId: number) {
     }
 }
 
-const page = usePage<SharedData>();
+async function createPayment() {
+    try {
+        isProcessingPayment.value = true;
+        const response = await fetch(route('payments.create'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1] || '',
+            },
+            body: JSON.stringify({ amount: '20.00' }),
+        });
+
+        const data = await response.json();
+
+        if (data.paypalUrl) {
+            window.location.href = data.paypalUrl;
+        }
+    } catch (error) {
+        console.error('Payment creation failed:', error);
+    } finally {
+        isProcessingPayment.value = false;
+    }
+}
+
 const user = page.props.auth.user as User;
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -45,6 +70,16 @@ const breadcrumbs: BreadcrumbItem[] = [
             <GameForm class="mb-10" :locations="props.locations" :players="props.players" v-if="user" />
 
             <div>
+                <div class="mb-4">
+                    <button
+                        @click="createPayment"
+                        :disabled="isProcessingPayment"
+                        class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                    >
+                        {{ isProcessingPayment ? 'Processing...' : 'Test PayPal Payment (€20)' }}
+                    </button>
+                </div>
+
                 <h2 class="text-xl font-semibold"></h2>
                 <div v-if="props.games.length === 0" class="text-sm text-muted-foreground">No open games available.</div>
                 <div v-else class="grid gap-4">

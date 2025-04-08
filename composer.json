@@ -17,6 +17,7 @@
         "spatie/laravel-data": "^4.14",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-typescript-transformer": "^2.5",
+        "srmklive/paypal": "~3.0",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {
