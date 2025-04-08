@@ -15,5 +15,6 @@ class TGamePayment extends Data
         public ?string $paypal_payment_id,
         public string $status,
         public TPlayer $player,
+        public ?TUser $payer,
     ) {}
 }

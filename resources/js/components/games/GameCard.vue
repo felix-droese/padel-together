@@ -47,6 +47,10 @@ const userPayment = computed(() => {
     return props.game.payments.find((payment) => payment.player.user?.id === auth.value.user.id);
 });
 
+const payer = computed(() => {
+    return props.game.payments.find((payment) => payment.payer)?.payer;
+});
+
 async function createPayment() {
     try {
         isProcessingPayment.value = true;
@@ -95,6 +99,7 @@ async function createPayment() {
                 <div>
                     <h3 class="font-medium">Your Payment</h3>
                     <p class="text-sm text-muted-foreground">Amount: €{{ (userPayment.amount_in_cent / 100).toFixed(2) }}</p>
+                    <p v-if="payer" class="text-sm text-muted-foreground">Pay to: {{ payer.email }}</p>
                 </div>
                 <div>
                     <span

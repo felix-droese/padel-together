@@ -26,7 +26,7 @@ class GameController extends Controller
     {
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.player'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.player', 'payments.payer'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($game) {
@@ -55,6 +55,7 @@ class GameController extends Controller
             'second_team_players' => ['sometimes', 'array', 'min:1', 'max:2'],
             'second_team_players.*' => ['nullable', Rule::exists('players', 'id')],
             'price_in_cent' => ['required', 'integer', 'min:0'],
+            'payer_id' => ['required', 'exists:users,id'],
         ]);
 
         // Get the authenticated user's player
@@ -92,11 +93,13 @@ class GameController extends Controller
         $allPlayers = array_merge($firstTeamPlayers, $secondTeamPlayers ?? []);
 
         foreach ($allPlayers as $playerId) {
+            $player = Player::find($playerId);
             GamePayment::create([
                 'game_id' => $game->id,
                 'player_id' => $playerId,
+                'payer_id' => $player->user_id === $validated['payer_id'] ? $validated['payer_id'] : null,
                 'amount_in_cent' => $playerAmount,
-                'status' => 'pending',
+                'status' => $player->user_id === $validated['payer_id'] ? 'completed' : 'pending',
             ]);
         }
 

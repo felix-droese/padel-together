@@ -27,6 +27,7 @@ declare namespace App.DTOs {
         paypal_payment_id: string | null;
         status: string;
         player: App.DTOs.TPlayer;
+        payer: App.DTOs.TUser | null;
     };
     export type TGameResult = {
         id: number;

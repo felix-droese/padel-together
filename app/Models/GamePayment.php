@@ -21,4 +21,9 @@ class GamePayment extends Model
     {
         return $this->belongsTo(Player::class);
     }
+
+    public function payer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
 }
