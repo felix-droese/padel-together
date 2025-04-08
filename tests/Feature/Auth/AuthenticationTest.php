@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('games', absolute: false));
+        $response->assertRedirect(routes('games.index', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password()

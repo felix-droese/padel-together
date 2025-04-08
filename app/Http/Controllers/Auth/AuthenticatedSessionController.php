@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('games', absolute: false));
+        return redirect()->intended(routes('games.index', absolute: false));
     }
 
     /**

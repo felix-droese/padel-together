@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
             $user = User::firstOrCreate(
                 ['email' => $playerData['email']],
                 [
-                    'name' => $playerData['name'],
                     'password' => Hash::make('1234'),
                 ]
             );
