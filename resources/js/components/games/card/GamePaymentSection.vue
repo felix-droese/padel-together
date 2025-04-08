@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import type { SharedData } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import PaymentRow from './PaymentRow.vue';
+import PaymentStatusBadge from './PaymentStatusBadge.vue';
 
 const props = defineProps<{
     game: App.DTOs.TGame;
@@ -10,7 +12,6 @@ const props = defineProps<{
 
 const page = usePage<SharedData>();
 const auth = computed(() => page.props.auth);
-
 const isProcessingPayment = ref(false);
 
 function formatPrice(amountInCent: number): string {
@@ -55,49 +56,32 @@ async function createPayment() {
         isProcessingPayment.value = false;
     }
 }
-
-const getStatusClasses = (status: string) => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset';
-    const statusClasses = {
-        completed: 'bg-green-50 text-green-700 ring-green-600/20',
-        pending: 'bg-yellow-50 text-yellow-800 ring-yellow-600/20',
-        failed: 'bg-red-50 text-red-700 ring-red-600/20',
-    };
-    return `${baseClasses} ${statusClasses[status as keyof typeof statusClasses]}`;
-};
 </script>
 
 <template>
-    <!-- Your Payment Section -->
-    <div v-if="!isPayer && userPayment" class="mt-4 rounded-lg border p-4">
-        <div class="flex items-center justify-between">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                    <h3 class="font-medium">Your Payment</h3>
-                    <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
-                    <span :class="getStatusClasses(userPayment.status)">{{ userPayment.status }}</span>
+    <template v-if="userPayment">
+        <!-- Payment Overview -->
+        <div class="mt-4 space-y-3 text-sm">
+            <div v-if="isPayer" class="rounded-lg border p-4">
+                <h4 class="font-medium">Payments Overview</h4>
+                <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
+                <div class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
+                    <PaymentRow v-for="payment in otherPayments" :key="payment.id" :payment="payment" />
                 </div>
-                <p v-if="payer" class="text-sm text-muted-foreground">Pay to: {{ payer.email }}</p>
             </div>
-        </div>
-        <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
-            {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
-        </Button>
-    </div>
 
-    <!-- Other Players' Payments Section -->
-    <div v-if="isPayer && userPayment" class="space-y-3 text-sm">
-        <h4 class="mt-8 font-medium">Payments (you paid {{ formatPrice(game.price_in_cent) }})</h4>
-        <div class="max-w-[360px] divide-y divide-border rounded-lg border">
-            <div v-for="payment in otherPayments" :key="payment.id" class="flex items-center justify-between gap-2 p-3">
-                <div>
-                    <span class="mr-2 font-medium">{{ payment.player.first_name }} {{ payment.player.last_name }}</span>
-                    <span :class="getStatusClasses(payment.status)">{{ payment.status }}</span>
+            <!-- Pending Payment -->
+            <div v-else class="rounded-lg border p-4">
+                <div class="flex items-center gap-2">
+                    <h4 class="font-medium">Your Payment</h4>
+                    <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
+                    <PaymentStatusBadge :status="userPayment.status" />
                 </div>
-                <div>
-                    <span class="tabular-nums">{{ formatPrice(payment.amount_in_cent) }}</span>
-                </div>
+                <p v-if="payer" class="mt-1 text-sm text-muted-foreground">Pay to: {{ payer.email }}</p>
+                <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
+                    {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
+                </Button>
             </div>
         </div>
-    </div>
+    </template>
 </template>
