@@ -35,7 +35,7 @@ const { isMobile, state } = useSidebar();
         </SidebarMenuItem>
     </SidebarMenu>
 
-    <Button as-child>
+    <Button as-child v-else>
         <Link :href="route('register')"> Register </Link>
     </Button>
 </template>
