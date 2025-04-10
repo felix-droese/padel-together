@@ -46,6 +46,11 @@ class HandleInertiaRequests extends Middleware
             $userData = [
                 ...$user->toArray(),
                 'roles' => $user->getRoleNames(),
+                'player' => [
+                    'id' => $user->player->id,
+                    'first_name' => $user->player->first_name,
+                    'last_name' => $user->player->last_name,
+                ],
             ];
         }
 

@@ -33,15 +33,11 @@ export interface User {
     created_at: string;
     updated_at: string;
     roles: string[];
-    player?: {
+    player: {
         id: number;
         first_name: string;
         last_name: string;
-        user: {
-            id: number;
-            email: string;
-        };
-    } | null;
+    };
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -53,7 +49,10 @@ export interface PageProps {
             name: string;
             email: string;
             roles: string[];
+            player: {
+                first_name: string;
+                last_name: string;
+            };
         } | null;
     };
 }
-
