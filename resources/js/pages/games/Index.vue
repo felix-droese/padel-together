@@ -15,45 +15,11 @@ const props = defineProps<{
 
 const page = usePage<SharedData>();
 const selectedLocationIds = ref<number[]>([]);
-const isProcessingPayment = ref(false);
 
 const filteredGames = computed(() => {
     if (selectedLocationIds.value.length === 0) return props.games;
     return props.games.filter((game) => selectedLocationIds.value.includes(game.location_id));
 });
-
-function toggleLocation(locationId: number) {
-    const index = selectedLocationIds.value.indexOf(locationId);
-    if (index === -1) {
-        selectedLocationIds.value.push(locationId);
-    } else {
-        selectedLocationIds.value.splice(index, 1);
-    }
-}
-
-async function createPayment() {
-    try {
-        isProcessingPayment.value = true;
-        const response = await fetch(route('payments.create'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-XSRF-TOKEN': document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1] || '',
-            },
-            body: JSON.stringify({ amount: '20.00' }),
-        });
-
-        const data = await response.json();
-
-        if (data.paypalUrl) {
-            window.location.href = data.paypalUrl;
-        }
-    } catch (error) {
-        console.error('Payment creation failed:', error);
-    } finally {
-        isProcessingPayment.value = false;
-    }
-}
 
 const user = page.props.auth.user as User;
 
