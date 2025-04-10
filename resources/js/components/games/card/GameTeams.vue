@@ -42,7 +42,7 @@ const isPlayerInGame = computed(() => {
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
             <TeamDisplay :team="props.game.first_team" :elo-changes="props.game.elo_changes" />
-            <span class="mx-8 text-muted-foreground">vs</span>
+            <span class="mx-4 md:mx-8 text-muted-foreground">vs</span>
             <TeamDisplay v-if="props.game.second_team" :team="props.game.second_team" :elo-changes="props.game.elo_changes" />
         </div>
         <div v-if="isPlayerInGame" class="flex items-center gap-2">
