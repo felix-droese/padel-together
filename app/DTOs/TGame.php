@@ -18,8 +18,13 @@ class TGame extends Data
         public ?TTeam $second_team,
         public ?TGameResult $result,
         public ?TTeam $winning_team,
+        public ?int $price_in_cent,
+        public ?TUser $payer,
 
         /** @param Collection<int, TEloChange> $elo_changes */
         public Collection $elo_changes,
+
+        /** @param Collection<int, TGamePayment> $payments */
+        public Collection $payments,
     ) {}
 }

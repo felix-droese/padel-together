@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\DTOs\TEloChange;
 use App\DTOs\TGame;
+use App\DTOs\TGamePayment;
 use App\DTOs\TLocation;
 use App\DTOs\TPlayer;
 use App\DTOs\TTeam;
+use App\DTOs\TUser;
 use App\Models\EloChange;
 use App\Models\Game;
+use App\Models\GamePayment;
 use App\Models\Location;
 use App\Models\Player;
 use App\Models\Team;
@@ -24,13 +27,15 @@ class GameController extends Controller
     {
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.user', 'payer'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($game) {
                 $tGame = TGame::from($game);
                 $tGame->winning_team = $game->winning_team ? TTeam::from($game->winning_team) : null;
                 $tGame->elo_changes = $game->eloChanges->map(fn ($change) => TEloChange::from($change));
+                $tGame->payments = $game->payments->map(fn ($payment) => TGamePayment::from($payment));
+                $tGame->payer = $game->payer ? TUser::from($game->payer) : null;
 
                 return $tGame;
             });
@@ -52,6 +57,7 @@ class GameController extends Controller
             'second_team_players' => ['sometimes', 'array', 'min:1', 'max:2'],
             'second_team_players.*' => ['nullable', Rule::exists('players', 'id')],
             'price_in_cent' => ['required', 'integer', 'min:0'],
+            'payer_id' => ['required', 'exists:users,id'],
         ]);
 
         // Get the authenticated user's player
@@ -76,13 +82,28 @@ class GameController extends Controller
         }
 
         // Create the game
-        Game::create([
+        $game = Game::create([
             'first_team_id' => $firstTeam->id,
             'second_team_id' => $secondTeam?->id,
             'date' => $validated['date'],
             'location_id' => $validated['location_id'],
             'price_in_cent' => $validated['price_in_cent'],
+            'payer_id' => $validated['payer_id'],
         ]);
+
+        // Create payment records for each player
+        $playerAmount = ceil($validated['price_in_cent'] / 4); // Divide by 4 and round up
+        $allPlayers = array_merge($firstTeamPlayers, $secondTeamPlayers ?? []);
+
+        foreach ($allPlayers as $playerId) {
+            $player = Player::find($playerId);
+            GamePayment::create([
+                'game_id' => $game->id,
+                'user_id' => $player->user_id,
+                'amount_in_cent' => $playerAmount,
+                'status' => $player->user_id === $validated['payer_id'] ? 'completed' : 'pending',
+            ]);
+        }
 
         return redirect()->back();
     }

@@ -17,7 +17,7 @@ class GameFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'price_in_cent' => 4 * 15_000,
         ];
     }
 }

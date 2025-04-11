@@ -1,0 +1,89 @@
+<script setup lang="ts">
+import { Button } from '@/components/ui/button';
+import type { SharedData } from '@/types';
+import { usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import PaymentRow from './PaymentRow.vue';
+import PaymentStatusBadge from './PaymentStatusBadge.vue';
+
+const props = defineProps<{
+    game: App.DTOs.TGame;
+}>();
+
+const page = usePage<SharedData>();
+const auth = computed(() => page.props.auth);
+const isProcessingPayment = ref(false);
+
+function formatPrice(amountInCent: number): string {
+    return `€${(amountInCent / 100).toFixed(2)}`;
+}
+
+const userPayment = computed(() => {
+    return props.game.payments.find((payment) => payment.user.id === auth.value.user?.id);
+});
+
+const isPayer = computed(() => {
+    return props.game.payer?.id === auth.value.user?.id;
+});
+
+const otherPayments = computed(() => {
+    return props.game.payments.filter((payment) => payment.user.id !== auth.value.user?.id);
+});
+
+const payer = computed(() => {
+    return props.game.payer;
+});
+
+async function createPayment() {
+    try {
+        isProcessingPayment.value = true;
+        const response = await fetch(route('game-payments.create', { game: props.game.id }), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': document.cookie.match(/XSRF-TOKEN=([\w-]+)/)?.[1] || '',
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.paypalUrl) {
+            window.location.href = data.paypalUrl;
+        }
+    } catch (error) {
+        console.error('Payment creation failed:', error);
+    } finally {
+        isProcessingPayment.value = false;
+    }
+}
+</script>
+
+<template>
+    <template v-if="userPayment">
+        <!-- Payment Overview -->
+        <div class="mt-4 space-y-3 text-sm">
+            <div v-if="isPayer" class="rounded-lg border p-4">
+                <h4 class="font-medium">Payments Overview</h4>
+                <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
+                <div class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
+                    <PaymentRow v-for="payment in otherPayments" :key="payment.id" :payment="payment" />
+                </div>
+            </div>
+
+            <!-- Pending Payment -->
+            <div v-else class="rounded-lg border p-4">
+                <div class="flex items-center gap-2">
+                    <h4 class="font-medium">Your Payment</h4>
+                    <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
+                    <PaymentStatusBadge :status="userPayment.status" />
+                </div>
+                <p v-if="payer" class="mt-1.5 text-sm text-muted-foreground">
+                    {{ userPayment.status === 'completed' ? 'Paid to:' : 'Pay to:' }} {{ payer.email }}
+                </p>
+                <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
+                    {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
+                </Button>
+            </div>
+        </div>
+    </template>
+</template>

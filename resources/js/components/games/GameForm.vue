@@ -25,6 +25,7 @@ const gameForm = useForm({
     first_team_players: [authenticatedPlayer?.id, undefined] as (number | undefined)[],
     second_team_players: [undefined, undefined] as (number | undefined)[],
     price_in_cent: 0,
+    payer_id: authenticatedUser?.id,
 });
 
 function submitGame() {
@@ -51,6 +52,18 @@ const playerOptions = computed(() => {
         value: player.id,
         label: `${player.first_name} ${player.last_name}`,
     }));
+});
+
+const payerOptions = computed(() => {
+    // Get all users from the players list
+    const users = props.players
+        .filter((player) => player.user)
+        .map((player) => ({
+            value: player.user!.id,
+            label: `${player.first_name} ${player.last_name} (${player.user!.email})`,
+        }));
+
+    return users;
 });
 
 const availableSecondTeamFirstPlayer = computed(() => {
@@ -126,6 +139,20 @@ const authenticatedPlayerOption = computed(() => {
                         class="w-[300px] rounded-md border border-input bg-background px-3 py-2 text-sm"
                     />
                     <InputError :message="gameForm.errors.price_in_cent" />
+                </div>
+                <div>
+                    <Label for="payer">Payer</Label>
+                    <EnhancedSelect
+                        v-model="gameForm.payer_id"
+                        :options="payerOptions"
+                        placeholder="Select who will pay for the game"
+                        :disabled="gameForm.processing"
+                        class="w-[300px]"
+                    />
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        The selected player will pay the full amount. Other players will need to pay their share (1/4) to this player.
+                    </p>
+                    <InputError :message="gameForm.errors.payer_id" />
                 </div>
             </div>
 

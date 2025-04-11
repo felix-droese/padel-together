@@ -40,6 +40,16 @@ class Game extends Model
         return $this->hasMany(EloChange::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(GamePayment::class);
+    }
+
+    public function payer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
+
     public function getWinningTeamAttribute(): ?Team
     {
         if (! $this->result) {
