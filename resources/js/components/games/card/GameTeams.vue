@@ -39,14 +39,14 @@ const isPlayerInGame = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col justify-between lg:flex-row lg:items-center">
+    <div class="flex flex-col justify-between lg:flex-row">
         <div class="flex items-center gap-2">
             <TeamDisplay :team="props.game.first_team" :elo-changes="props.game.elo_changes" />
             <span class="mx-4 text-muted-foreground md:mx-8">vs</span>
             <TeamDisplay v-if="props.game.second_team" :team="props.game.second_team" :elo-changes="props.game.elo_changes" />
         </div>
-        <div v-if="isPlayerInGame" class="flex items-center gap-2">
-            <GameResultForm v-if="canEditResult" :game="props.game" />
+        <div v-if="isPlayerInGame && canEditResult" class="flex gap-2">
+            <GameResultForm :game="props.game" />
             <Button variant="ghost" size="icon" @click="deleteGame">
                 <Trash2 class="h-4 w-4" />
             </Button>
