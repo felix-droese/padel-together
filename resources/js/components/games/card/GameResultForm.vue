@@ -17,13 +17,14 @@ const resultForm = useForm({
     ],
 });
 
-function submitResult(gameId: number) {
+function submitResult(gameId: number, close: () => void) {
     const routeName = props.game.result ? 'games.result.update' : 'games.result';
     const method = props.game.result ? 'put' : 'post';
 
     resultForm[method](route(routeName, { game: gameId }), {
         onSuccess: () => {
             resultForm.reset();
+            close();
         },
     });
 }
@@ -96,7 +97,7 @@ watch(
                 </div>
                 <div class="flex gap-2">
                     <Button @click="close" variant="outline" class="flex-1">Cancel</Button>
-                    <Button @click="submitResult(props.game.id)" :disabled="resultForm.processing" class="flex-1">
+                    <Button @click="submitResult(props.game.id, close)" :disabled="resultForm.processing" class="flex-1">
                         {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
                     </Button>
                 </div>
