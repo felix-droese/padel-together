@@ -8,6 +8,7 @@ use App\DTOs\TGamePayment;
 use App\DTOs\TLocation;
 use App\DTOs\TPlayer;
 use App\DTOs\TTeam;
+use App\DTOs\TUser;
 use App\Models\EloChange;
 use App\Models\Game;
 use App\Models\GamePayment;
@@ -26,7 +27,7 @@ class GameController extends Controller
     {
         $locations = Location::all()->map(fn ($location) => TLocation::from($location));
         $players = Player::all()->map(fn ($player) => TPlayer::from($player));
-        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.player', 'payments.payer'])
+        $games = Game::with(['firstTeam.players', 'secondTeam.players', 'location', 'result', 'eloChanges', 'payments.user', 'payer'])
             ->orderBy('date', 'desc')
             ->get()
             ->map(function ($game) {
@@ -34,6 +35,7 @@ class GameController extends Controller
                 $tGame->winning_team = $game->winning_team ? TTeam::from($game->winning_team) : null;
                 $tGame->elo_changes = $game->eloChanges->map(fn ($change) => TEloChange::from($change));
                 $tGame->payments = $game->payments->map(fn ($payment) => TGamePayment::from($payment));
+                $tGame->payer = $game->payer ? TUser::from($game->payer) : null;
 
                 return $tGame;
             });
@@ -86,6 +88,7 @@ class GameController extends Controller
             'date' => $validated['date'],
             'location_id' => $validated['location_id'],
             'price_in_cent' => $validated['price_in_cent'],
+            'payer_id' => $validated['payer_id'],
         ]);
 
         // Create payment records for each player
@@ -96,8 +99,7 @@ class GameController extends Controller
             $player = Player::find($playerId);
             GamePayment::create([
                 'game_id' => $game->id,
-                'player_id' => $playerId,
-                'payer_id' => $player->user_id === $validated['payer_id'] ? $validated['payer_id'] : null,
+                'user_id' => $player->user_id,
                 'amount_in_cent' => $playerAmount,
                 'status' => $player->user_id === $validated['payer_id'] ? 'completed' : 'pending',
             ]);

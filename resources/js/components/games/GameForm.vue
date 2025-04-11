@@ -60,7 +60,7 @@ const payerOptions = computed(() => {
         .filter((player) => player.user)
         .map((player) => ({
             value: player.user!.id,
-            label: `${player.first_name} ${player.last_name}`,
+            label: `${player.first_name} ${player.last_name} (${player.user!.email})`,
         }));
 
     return users;

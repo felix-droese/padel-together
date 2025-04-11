@@ -19,19 +19,19 @@ function formatPrice(amountInCent: number): string {
 }
 
 const userPayment = computed(() => {
-    return props.game.payments.find((payment) => payment.player.user?.id === auth.value.user?.id);
+    return props.game.payments.find((payment) => payment.user.id === auth.value.user?.id);
 });
 
 const isPayer = computed(() => {
-    return props.game.payments.some((payment) => payment.payer?.id === auth.value.user?.id);
+    return props.game.payer?.id === auth.value.user?.id;
 });
 
 const otherPayments = computed(() => {
-    return props.game.payments.filter((payment) => payment.player.user?.id !== auth.value.user?.id);
+    return props.game.payments.filter((payment) => payment.user.id !== auth.value.user?.id);
 });
 
 const payer = computed(() => {
-    return props.game.payments.find((payment) => payment.payer)?.payer;
+    return props.game.payer;
 });
 
 async function createPayment() {

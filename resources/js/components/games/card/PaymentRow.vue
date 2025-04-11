@@ -13,7 +13,7 @@ function formatPrice(amountInCent: number): string {
 <template>
     <div class="flex items-center justify-between gap-2 p-3">
         <div>
-            <span class="mr-2 font-medium">{{ props.payment.player.first_name }} {{ props.payment.player.last_name }}</span>
+            <span class="mr-2 font-medium">{{ props.payment.user.email }}</span>
             <PaymentStatusBadge :status="props.payment.status" />
         </div>
         <div>

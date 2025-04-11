@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\GamePayment;
-use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -13,9 +12,8 @@ class GamePaymentController extends Controller
 {
     public function create(Request $request, Game $game)
     {
-        $userPlayer = Player::where('user_id', Auth::id())->firstOrFail();
         $payment = GamePayment::where('game_id', $game->id)
-            ->where('player_id', $userPlayer->id)
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         if ($payment->status === 'completed') {
@@ -68,9 +66,8 @@ class GamePaymentController extends Controller
             $result = $provider->capturePaymentOrder($request->token);
 
             if ($result['status'] === 'COMPLETED') {
-                $userPlayer = Player::where('user_id', Auth::id())->firstOrFail();
                 $payment = GamePayment::where('game_id', $game->id)
-                    ->where('player_id', $userPlayer->id)
+                    ->where('user_id', Auth::id())
                     ->firstOrFail();
 
                 $payment->update([
