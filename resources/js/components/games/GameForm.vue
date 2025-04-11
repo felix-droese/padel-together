@@ -6,7 +6,7 @@ import { EnhancedSelect } from '@/components/ui/select';
 import type { SharedData } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, defineEmits, ref } from 'vue';
 
 const props = defineProps<{
     locations: App.DTOs.TLocation[];
@@ -26,11 +26,23 @@ const playerForm = useForm({
     last_name: '',
 });
 
+const emit = defineEmits<{
+    (e: 'playerAdded', player: App.DTOs.TPlayer): void;
+}>();
+
 function submitPlayer() {
     playerForm.post(route('players.store'), {
-        onSuccess: () => {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: (response) => {
             playerForm.reset();
             showPlayerForm.value = false;
+
+            // Emit the new player to the parent component
+            const newPlayer = response.props.player as App.DTOs.TPlayer;
+            if (newPlayer) {
+                emit('playerAdded', newPlayer);
+            }
         },
     });
 }

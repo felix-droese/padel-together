@@ -49,9 +49,10 @@ class PlayerController extends Controller
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
             'user_id' => $user->id,
+            'elo' => 1500,
         ]);
 
-        return redirect()->back();
+        return back()->with('player', TPlayer::from($player));
     }
 
     public function destroy(Player $player)
