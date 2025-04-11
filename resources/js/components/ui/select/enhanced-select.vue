@@ -70,6 +70,7 @@ function handleSearchInput(event: Event) {
                         class="w-full rounded-md border border-input bg-background px-8 py-1 text-sm outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
                     />
                 </div>
+                <slot name="after-search" />
                 <div class="max-h-[300px] overflow-y-auto">
                     <SelectItem
                         v-for="option in filteredOptions"
@@ -79,6 +80,7 @@ function handleSearchInput(event: Event) {
                         {{ option.label }}
                     </SelectItem>
                 </div>
+                <slot name="after-options" />
             </SelectContent>
         </Select>
         <Button

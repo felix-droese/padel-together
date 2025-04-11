@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { EnhancedSelect } from '@/components/ui/select';
 import type { SharedData } from '@/types';
 import { useForm, usePage } from '@inertiajs/vue3';
+import { Plus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
@@ -18,6 +19,21 @@ const authenticatedUser = page.props.auth.user;
 const authenticatedPlayer = props.players.find((player) => player.user?.id === authenticatedUser?.id);
 
 const isGameFormVisible = ref(false);
+const showPlayerForm = ref(false);
+
+const playerForm = useForm({
+    first_name: '',
+    last_name: '',
+});
+
+function submitPlayer() {
+    playerForm.post(route('players.store'), {
+        onSuccess: () => {
+            playerForm.reset();
+            showPlayerForm.value = false;
+        },
+    });
+}
 
 const gameForm = useForm({
     date: '',
@@ -172,7 +188,38 @@ const authenticatedPlayerOption = computed(() => {
                                 clearable
                                 class="w-[300px]"
                                 :value-type="'number'"
-                            />
+                            >
+                                <template #after-search>
+                                    <div class="border-b border-t p-2">
+                                        <div v-if="!showPlayerForm">
+                                            <Button variant="ghost" class="w-full justify-start gap-2" @click="showPlayerForm = true">
+                                                <Plus class="h-4 w-4" />
+                                                Add Player
+                                            </Button>
+                                        </div>
+                                        <div v-else class="space-y-2">
+                                            <input
+                                                v-model="playerForm.first_name"
+                                                type="text"
+                                                placeholder="First Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <input
+                                                v-model="playerForm.last_name"
+                                                type="text"
+                                                placeholder="Last Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <div class="flex gap-2">
+                                                <Button @click="showPlayerForm = false" variant="ghost" class="flex-1">Cancel</Button>
+                                                <Button @click="submitPlayer" :disabled="playerForm.processing" class="flex-1">
+                                                    {{ playerForm.processing ? 'Adding...' : 'Add' }}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </EnhancedSelect>
                         </div>
                         <InputError :message="gameForm.errors.first_team_players" />
                     </div>
@@ -187,7 +234,38 @@ const authenticatedPlayerOption = computed(() => {
                                 clearable
                                 class="w-[300px]"
                                 :value-type="'number'"
-                            />
+                            >
+                                <template #after-search>
+                                    <div class="border-b border-t p-2">
+                                        <div v-if="!showPlayerForm">
+                                            <Button variant="ghost" class="w-full justify-start gap-2" @click="showPlayerForm = true">
+                                                <Plus class="h-4 w-4" />
+                                                Add Player
+                                            </Button>
+                                        </div>
+                                        <div v-else class="space-y-2">
+                                            <input
+                                                v-model="playerForm.first_name"
+                                                type="text"
+                                                placeholder="First Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <input
+                                                v-model="playerForm.last_name"
+                                                type="text"
+                                                placeholder="Last Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <div class="flex gap-2">
+                                                <Button @click="showPlayerForm = false" variant="ghost" class="flex-1">Cancel</Button>
+                                                <Button @click="submitPlayer" :disabled="playerForm.processing" class="flex-1">
+                                                    {{ playerForm.processing ? 'Adding...' : 'Add' }}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </EnhancedSelect>
                             <EnhancedSelect
                                 v-model="gameForm.second_team_players[1]"
                                 :options="availableSecondTeamSecondPlayer"
@@ -196,7 +274,38 @@ const authenticatedPlayerOption = computed(() => {
                                 clearable
                                 class="w-[300px]"
                                 :value-type="'number'"
-                            />
+                            >
+                                <template #after-search>
+                                    <div class="border-b border-t p-2">
+                                        <div v-if="!showPlayerForm">
+                                            <Button variant="ghost" class="w-full justify-start gap-2" @click="showPlayerForm = true">
+                                                <Plus class="h-4 w-4" />
+                                                Add Player
+                                            </Button>
+                                        </div>
+                                        <div v-else class="space-y-2">
+                                            <input
+                                                v-model="playerForm.first_name"
+                                                type="text"
+                                                placeholder="First Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <input
+                                                v-model="playerForm.last_name"
+                                                type="text"
+                                                placeholder="Last Name"
+                                                class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                            />
+                                            <div class="flex gap-2">
+                                                <Button @click="showPlayerForm = false" variant="ghost" class="flex-1">Cancel</Button>
+                                                <Button @click="submitPlayer" :disabled="playerForm.processing" class="flex-1">
+                                                    {{ playerForm.processing ? 'Adding...' : 'Add' }}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </EnhancedSelect>
                         </div>
                         <InputError :message="gameForm.errors.second_team_players" />
                     </div>

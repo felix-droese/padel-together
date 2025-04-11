@@ -2,11 +2,14 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { Plus } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
     game: App.DTOs.TGame;
 }>();
+
+const showPlayerForm = ref(false);
 
 const resultForm = useForm({
     game_id: 0,
@@ -16,6 +19,20 @@ const resultForm = useForm({
         { first_team: '', second_team: '' },
     ],
 });
+
+const playerForm = useForm({
+    first_name: '',
+    last_name: '',
+});
+
+function submitPlayer() {
+    playerForm.post(route('players.store'), {
+        onSuccess: () => {
+            playerForm.reset();
+            showPlayerForm.value = false;
+        },
+    });
+}
 
 function submitResult(gameId: number, close: () => void) {
     const routeName = props.game.result ? 'games.result.update' : 'games.result';
@@ -100,6 +117,29 @@ watch(
                     <Button @click="submitResult(props.game.id, close)" :disabled="resultForm.processing" class="flex-1">
                         {{ resultForm.processing ? 'Saving...' : 'Save Result' }}
                     </Button>
+                </div>
+                <div class="border-t pt-4">
+                    <Button variant="ghost" class="w-full justify-start gap-2" @click="showPlayerForm = !showPlayerForm">
+                        <Plus class="h-4 w-4" />
+                        Add Player
+                    </Button>
+                    <div v-if="showPlayerForm" class="mt-4 space-y-2">
+                        <input
+                            v-model="playerForm.first_name"
+                            type="text"
+                            placeholder="First Name"
+                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                        />
+                        <input
+                            v-model="playerForm.last_name"
+                            type="text"
+                            placeholder="Last Name"
+                            class="w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                        />
+                        <Button @click="submitPlayer" :disabled="playerForm.processing" class="w-full">
+                            {{ playerForm.processing ? 'Adding...' : 'Add Player' }}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </PopoverPanel>

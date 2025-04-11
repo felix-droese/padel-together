@@ -41,7 +41,6 @@ class PlayerController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $validated['first_name'].' '.$validated['last_name'],
             'email' => $validated['email'] ?? null,
             'password' => bcrypt(Str::random(32)),
         ]);
@@ -52,7 +51,7 @@ class PlayerController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return redirect()->route('players.index');
+        return redirect()->back();
     }
 
     public function destroy(Player $player)
