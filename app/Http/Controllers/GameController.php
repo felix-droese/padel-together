@@ -36,6 +36,7 @@ class GameController extends Controller
                 $tGame->elo_changes = $game->eloChanges->map(fn ($change) => TEloChange::from($change));
                 $tGame->payments = $game->payments->map(fn ($payment) => TGamePayment::from($payment));
                 $tGame->payer = $game->payer ? TUser::from($game->payer) : null;
+                // dd($tGame->payer);
 
                 return $tGame;
             });
@@ -97,11 +98,16 @@ class GameController extends Controller
 
         foreach ($allPlayers as $playerId) {
             $player = Player::find($playerId);
+
+            if ($player->user_id === $validated['payer_id']) {
+                continue;
+            }
+
             GamePayment::create([
                 'game_id' => $game->id,
                 'user_id' => $player->user_id,
                 'amount_in_cent' => $playerAmount,
-                'status' => $player->user_id === $validated['payer_id'] ? 'completed' : 'pending',
+                'status' => 'pending',
             ]);
         }
 

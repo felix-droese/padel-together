@@ -16,6 +16,18 @@ const auth = computed(() => page.props.auth);
 const isProcessingPayment = ref(false);
 const showPayments = ref(false);
 
+const completedPaymentsCount = computed(() => {
+    return props.game.payments.filter((payment) => payment.status === 'completed').length;
+});
+
+const totalPaymentsCount = computed(() => {
+    return props.game.payments.length;
+});
+
+const allPaymentsCompleted = computed(() => {
+    return completedPaymentsCount.value === totalPaymentsCount.value;
+});
+
 function formatPrice(amountInCent: number): string {
     return `€${(amountInCent / 100).toFixed(2)}`;
 }
@@ -61,35 +73,41 @@ async function createPayment() {
 </script>
 
 <template>
-    <template v-if="userPayment">
-        <!-- Payment Overview -->
-        <div class="mt-4 space-y-3 text-sm">
-            <div v-if="isPayer">
+    <!-- Payment Overview -->
+    <div class="mt-4 space-y-3 text-sm">
+        <div v-if="isPayer">
+            <div class="flex items-center gap-2">
                 <div class="flex cursor-pointer items-center gap-2" @click="showPayments = !showPayments">
                     <h4 class="font-medium">Payments Overview</h4>
                     <ChevronDown v-if="!showPayments" class="h-4 w-4" />
                     <ChevronUp v-else class="h-4 w-4" />
                 </div>
-                <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
-                <div v-if="showPayments" class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
-                    <PaymentRow v-for="payment in otherPayments" :key="payment.id" :payment="payment" />
-                </div>
+                <span
+                    class="rounded-full px-2 py-0.5 text-sm"
+                    :class="allPaymentsCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
+                >
+                    {{ completedPaymentsCount }}/{{ totalPaymentsCount }}
+                </span>
             </div>
-
-            <!-- Pending Payment -->
-            <div v-else>
-                <div class="flex items-center gap-2">
-                    <h4 class="font-medium">Your Payment</h4>
-                    <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
-                    <PaymentStatusBadge :status="userPayment.status" />
-                </div>
-                <p v-if="payer" class="mt-1.5 text-sm text-muted-foreground">
-                    {{ userPayment.status === 'completed' ? 'Paid to:' : 'Pay to:' }} {{ payer.email }}
-                </p>
-                <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
-                    {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
-                </Button>
+            <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
+            <div v-if="showPayments && otherPayments.length > 0" class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
+                <PaymentRow v-for="payment in otherPayments" :key="payment.id" :payment="payment" />
             </div>
         </div>
-    </template>
+
+        <!-- Pending Payment -->
+        <div v-if="userPayment">
+            <div class="flex items-center gap-2">
+                <h4 class="font-medium">Your Payment</h4>
+                <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
+                <PaymentStatusBadge :status="userPayment.status" />
+            </div>
+            <p v-if="payer" class="mt-1.5 text-sm text-muted-foreground">
+                {{ userPayment.status === 'completed' ? 'Paid to:' : 'Pay to:' }} {{ payer.email }}
+            </p>
+            <Button v-if="userPayment.status === 'pending'" class="mt-4 w-full" :disabled="isProcessingPayment" @click="createPayment">
+                {{ isProcessingPayment ? 'Processing...' : 'Pay with PayPal' }}
+            </Button>
+        </div>
+    </div>
 </template>
