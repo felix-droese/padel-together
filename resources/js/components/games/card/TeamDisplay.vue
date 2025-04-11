@@ -10,7 +10,7 @@ function getEloChange(playerId: number) {
 </script>
 
 <template>
-    <div class="w-full md:w-[200px]">
+    <div>
         <div v-for="player in props.team.players" :key="player.id" class="flex items-start justify-between gap-6 text-xs md:text-base">
             <div class="mb-4 flex items-start gap-1 truncate">
                 <div class="flex flex-col">

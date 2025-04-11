@@ -39,7 +39,7 @@ const isPlayerInGame = computed(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col justify-between lg:flex-row lg:items-center">
         <div class="flex items-center gap-2">
             <TeamDisplay :team="props.game.first_team" :elo-changes="props.game.elo_changes" />
             <span class="mx-4 text-muted-foreground md:mx-8">vs</span>

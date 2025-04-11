@@ -11,7 +11,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="w-fit space-y-4 rounded-lg border bg-card p-4 shadow-sm md:w-full">
+    <div class="space-y-4 rounded-lg border bg-card p-4 shadow-sm">
         <GameMetadata :game="props.game" :locations="props.locations" />
         <GameTeams :game="props.game" />
         <GameResultDisplay v-if="props.game.result" :game="props.game" />
