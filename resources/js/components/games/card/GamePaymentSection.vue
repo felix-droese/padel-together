@@ -62,7 +62,7 @@ async function createPayment() {
     <template v-if="userPayment">
         <!-- Payment Overview -->
         <div class="mt-4 space-y-3 text-sm">
-            <div v-if="isPayer" class="rounded-lg border p-4">
+            <div v-if="isPayer">
                 <h4 class="font-medium">Payments Overview</h4>
                 <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
                 <div class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
@@ -71,7 +71,7 @@ async function createPayment() {
             </div>
 
             <!-- Pending Payment -->
-            <div v-else class="rounded-lg border p-4">
+            <div v-else>
                 <div class="flex items-center gap-2">
                     <h4 class="font-medium">Your Payment</h4>
                     <span class="tabular-nums">{{ formatPrice(userPayment.amount_in_cent) }}</span>
