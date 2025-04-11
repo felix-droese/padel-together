@@ -3,7 +3,6 @@ const props = defineProps<{
     team: App.DTOs.TTeam;
     eloChanges: App.DTOs.TEloChange[];
 }>();
-
 function getEloChange(playerId: number) {
     return props.eloChanges.find((change) => change.player_id === playerId);
 }
@@ -11,7 +10,8 @@ function getEloChange(playerId: number) {
 
 <template>
     <div>
-        <div v-for="player in props.team.players" :key="player.id" class="flex items-start justify-between gap-6 text-sm md:text-base">
+        <div v-if="props.team.players.length === 0" class="text-sm md:text-base">-</div>
+        <div v-else v-for="player in props.team.players" :key="player.id" class="flex items-start justify-between gap-6 text-sm md:text-base">
             <div class="mb-4 flex items-start gap-1 truncate">
                 <div class="flex flex-col">
                     <div class="flex items-center gap-1">

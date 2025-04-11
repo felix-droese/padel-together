@@ -5,7 +5,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import GameResultForm from './GameResultForm.vue';
-import TeamDisplay from './TeamDisplay.vue';
+import PlayerDisplay from './PlayerDisplay.vue';
 
 const props = defineProps<{
     game: App.DTOs.TGame;
@@ -41,9 +41,13 @@ const isPlayerInGame = computed(() => {
 <template>
     <div class="flex flex-col justify-between lg:flex-row">
         <div class="flex items-center gap-2">
-            <TeamDisplay :team="props.game.first_team" :elo-changes="props.game.elo_changes" />
+            <div class="flex flex-col">
+                <PlayerDisplay v-for="i in 2" :key="i" :player="props.game.first_team.players[i - 1]" :elo-changes="props.game.elo_changes" />
+            </div>
             <span class="mx-4 text-muted-foreground md:mx-8">vs</span>
-            <TeamDisplay v-if="props.game.second_team" :team="props.game.second_team" :elo-changes="props.game.elo_changes" />
+            <div v-if="props.game.second_team" class="flex flex-col">
+                <PlayerDisplay v-for="i in 2" :key="i" :player="props.game.second_team.players[i - 1]" :elo-changes="props.game.elo_changes" />
+            </div>
         </div>
         <div v-if="isPlayerInGame && canEditResult" class="flex gap-2">
             <GameResultForm :game="props.game" />
