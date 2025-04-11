@@ -5,7 +5,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="w-full rounded-lg border bg-card p-4 text-xs shadow-sm md:text-sm">
+    <div class="w-fit rounded-lg border bg-card p-4 text-xs shadow-sm md:text-sm">
         <div class="grid grid-cols-[120px_20px_20px_20px] gap-x-4 gap-y-1 lg:grid-cols-[240px_40px_40px_40px]">
             <div class="col-span-1 font-medium text-black">Result</div>
             <div v-for="i in 3" :key="i" class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">Set {{ i }}</div>
