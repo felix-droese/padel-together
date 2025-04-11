@@ -9,9 +9,12 @@ const props = defineProps<{
     <div class="flex items-start justify-between gap-6 text-sm md:text-base">
         <div class="mb-4 flex items-start gap-1 truncate">
             <div class="flex flex-col">
-                <div class="flex items-center gap-1">
+                <div class="flex flex-col">
                     <span class="truncate font-medium">
-                        {{ props.player ? `${props.player.last_name} ${props.player.first_name}` : '-' }}
+                        {{ props.player ? props.player.last_name : '-' }}
+                    </span>
+                    <span class="truncate text-sm text-gray-600">
+                        {{ props.player ? props.player.first_name : '-' }}
                     </span>
                 </div>
             </div>
