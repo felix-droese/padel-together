@@ -11,13 +11,13 @@ function getEloChange(playerId: number) {
 
 <template>
     <div>
-        <div v-for="player in props.team.players" :key="player.id" class="flex items-start justify-between gap-6 text-xs md:text-base">
+        <div v-for="player in props.team.players" :key="player.id" class="flex items-start justify-between gap-6 text-sm md:text-base">
             <div class="mb-4 flex items-start gap-1 truncate">
                 <div class="flex flex-col">
                     <div class="flex items-center gap-1">
-                        <span class="truncate">{{ player.last_name }}</span>
+                        <span class="truncate font-medium">{{ player.last_name }}</span>
                     </div>
-                    <span class="text-xs md:text-base">{{ player.first_name }}</span>
+                    <span class="text-xs md:text-sm">{{ player.first_name }}</span>
                 </div>
             </div>
             <div class="flex flex-col">
