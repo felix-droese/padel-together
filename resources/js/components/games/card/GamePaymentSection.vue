@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import type { SharedData } from '@/types';
 import { usePage } from '@inertiajs/vue3';
+import { ChevronDown, ChevronUp } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import PaymentRow from './PaymentRow.vue';
 import PaymentStatusBadge from './PaymentStatusBadge.vue';
@@ -13,6 +14,7 @@ const props = defineProps<{
 const page = usePage<SharedData>();
 const auth = computed(() => page.props.auth);
 const isProcessingPayment = ref(false);
+const showPayments = ref(false);
 
 function formatPrice(amountInCent: number): string {
     return `€${(amountInCent / 100).toFixed(2)}`;
@@ -63,9 +65,13 @@ async function createPayment() {
         <!-- Payment Overview -->
         <div class="mt-4 space-y-3 text-sm">
             <div v-if="isPayer">
-                <h4 class="font-medium">Payments Overview</h4>
+                <div class="flex cursor-pointer items-center gap-2" @click="showPayments = !showPayments">
+                    <h4 class="font-medium">Payments Overview</h4>
+                    <ChevronDown v-if="!showPayments" class="h-4 w-4" />
+                    <ChevronUp v-else class="h-4 w-4" />
+                </div>
                 <p class="mt-1 text-muted-foreground">You paid {{ formatPrice(props.game.price_in_cent) }}</p>
-                <div class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
+                <div v-if="showPayments" class="mt-4 max-w-[360px] divide-y divide-border rounded-lg border">
                     <PaymentRow v-for="payment in otherPayments" :key="payment.id" :payment="payment" />
                 </div>
             </div>
